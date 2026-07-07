@@ -1,15 +1,15 @@
 import { Outlet } from 'react-router-dom';
 import { Header } from './header';
-import { BottomNav } from './BottomNav';
+import { AdminBottomNav } from './adminBottomNav';
 
-export function LayoutPrincipal() {
+export function LayoutAdmin() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1 pb-20">
         <Outlet />
       </main>
-      <BottomNav />
+      <AdminBottomNav />
     </div>
   );
 }

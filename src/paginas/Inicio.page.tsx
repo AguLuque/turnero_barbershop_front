@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
-import { GrillaHorarios } from '../components/turnos/horarios.turnos';
-import { FormularioReserva } from '../components/turnos/formularioReserva.turnos';
+import { GrillaHorarios } from '../components/turnos/horarios.cliente';
+import { FormularioReserva } from '../components/turnos/formularioReserva.cliente';
 import { useDisponibilidad } from '../hooks/useDisponibilidad';
-import { turnosServicio } from '../servicios/turnos.servicio';
+import { usePerfil } from '../hooks/usePerfil';
+import { turnosServicio } from '../servicio/turnos.servicio';
 import { fechaAISO } from '../utils/formatoFecha';
 
 export function Inicio() {
   const [fecha, setFecha] = useState<Date>(new Date());
   const fechaISO = fechaAISO(fecha);
   const { slots, cargando, recargar } = useDisponibilidad(fechaISO);
+  const { perfil } = usePerfil();
   const [horaSeleccionada, setHoraSeleccionada] = useState<string | null>(null);
 
   async function handleConfirmar(datos: { nombreCliente: string; telefonoCliente: string }) {
@@ -48,6 +50,8 @@ export function Inicio() {
         abierto={!!horaSeleccionada}
         fecha={fechaISO}
         hora={horaSeleccionada}
+        nombreSugerido={perfil?.nombre_completo}
+        telefonoSugerido={perfil?.telefono}
         onCerrar={() => setHoraSeleccionada(null)}
         onConfirmar={handleConfirmar}
       />

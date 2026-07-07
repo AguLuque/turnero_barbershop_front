@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { perfilesServicio } from '../servicios/perfiles.servicio';
+import { perfilesServicio } from '../servicio/perfiles.servicio';
 import type { Perfil } from '../types/dominio.types';
 
 type CambiosPerfil = Partial<Pick<Perfil, 'nombre_completo' | 'telefono' | 'foto_url'>>;

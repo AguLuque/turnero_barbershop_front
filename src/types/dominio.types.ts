@@ -28,7 +28,24 @@ export interface Turno {
   creado_en: string;
 }
 
+export interface TurnoFijo {
+  id: string;
+  id_peluqueria: string;
+  id_cliente: string;
+  dia_semana: number;
+  hora: string;
+  frecuencia_dias: number;
+  activo: boolean;
+  fecha_inicio: string;
+  creado_en: string;
+}
+
 export interface SlotDisponible {
   hora: string;
   disponible: boolean;
+}
+
+export interface ClienteConRanking {
+  perfil: Perfil;
+  cantidadTurnos: number;
 }

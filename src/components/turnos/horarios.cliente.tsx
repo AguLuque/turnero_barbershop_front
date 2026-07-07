@@ -20,7 +20,9 @@ export function GrillaHorarios({ slots, cargando, horaSeleccionada, onSelecciona
     );
   }
 
-  if (slots.length === 0) {
+  const disponibles = slots.filter((slot) => slot.disponible);
+
+  if (disponibles.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
         <p className="text-lg font-medium">No hay turnos disponibles este día</p>
@@ -31,11 +33,10 @@ export function GrillaHorarios({ slots, cargando, horaSeleccionada, onSelecciona
 
   return (
     <div className="grid grid-cols-3 gap-2">
-      {slots.map((slot) => (
+      {disponibles.map((slot) => (
         <Button
           key={slot.hora}
           variant={horaSeleccionada === slot.hora ? 'default' : 'outline'}
-          disabled={!slot.disponible}
           onClick={() => onSeleccionar(slot.hora)}
         >
           {slot.hora}

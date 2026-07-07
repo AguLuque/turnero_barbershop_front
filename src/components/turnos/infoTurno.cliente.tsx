@@ -30,6 +30,7 @@ export function TarjetaTurno({ turno, onCancelar }: Props) {
         <div>
           <p className="font-medium capitalize">{formatearFechaLegible(turno.fecha)}</p>
           <p className="text-sm text-muted-foreground">{formatearHora(turno.hora)} hs</p>
+          <p className="text-sm text-muted-foreground">{turno.nombre_cliente}</p>
           <Badge className={`mt-2 ${ESTILOS_ESTADO[turno.estado]}`}>{ETIQUETAS_ESTADO[turno.estado]}</Badge>
         </div>
         {turno.estado === 'confirmado' && (

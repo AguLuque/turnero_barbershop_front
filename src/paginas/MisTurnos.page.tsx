@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TarjetaTurno } from '../components/turnos/infoTurno.turnos';
-import { ModalCancelar } from '../components/turnos/cancelar.turnos';
+import { TarjetaTurno } from '../components/turnos/infoTurno.cliente';
+import { ModalCancelar } from '../components/turnos/cancelar.cliente';
 import { useTurnos } from '../hooks/useTurnos';
 import { fechaAISO } from '../utils/formatoFecha';
 import type { Turno } from '../types/dominio.types';

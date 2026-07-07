@@ -1,11 +1,14 @@
 import { apiFetch } from './api';
-import type { Perfil } from '../types/dominio.types';
+import { API_ROUTES } from '../config/api.routes';
+import type { ClienteConRanking, Perfil } from '../types/dominio.types';
+
+const ID_PELUQUERIA = import.meta.env.VITE_ID_PELUQUERIA;
 
 type CambiosPerfil = Partial<Pick<Perfil, 'nombre_completo' | 'telefono' | 'foto_url'>>;
 
 export const perfilesServicio = {
   async obtenerMiPerfil(): Promise<Perfil> {
-    const { perfil } = await apiFetch<{ perfil: Perfil }>('/perfiles/mi-perfil');
+    const { perfil } = await apiFetch<{ perfil: Perfil }>(API_ROUTES.perfiles.miPerfil);
     return perfil;
   },
 
@@ -15,10 +18,17 @@ export const perfilesServicio = {
     if (cambios.telefono !== undefined) cuerpo.telefono = cambios.telefono;
     if (cambios.foto_url !== undefined) cuerpo.fotoUrl = cambios.foto_url;
 
-    const { perfil } = await apiFetch<{ perfil: Perfil }>('/perfiles/mi-perfil', {
+    const { perfil } = await apiFetch<{ perfil: Perfil }>(API_ROUTES.perfiles.miPerfil, {
       metodo: 'PATCH',
       cuerpo,
     });
     return perfil;
+  },
+
+  async adminListarClientes(): Promise<ClienteConRanking[]> {
+    const { clientes } = await apiFetch<{ clientes: ClienteConRanking[] }>(
+      API_ROUTES.perfiles.clientes(ID_PELUQUERIA)
+    );
+    return clientes;
   },
 };

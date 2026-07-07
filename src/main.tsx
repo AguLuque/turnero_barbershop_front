@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AuthProvider } from './contexto/authContext';
-import { AppRouter } from './rutas/appRouter';
+import { AppRouter } from './App';
 import { Toaster } from '@/components/ui/sonner';
 import './index.css';
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -26,22 +26,39 @@ interface Props {
   abierto: boolean;
   fecha: string;
   hora: string | null;
+  nombreSugerido?: string | null;
+  telefonoSugerido?: string | null;
   onCerrar: () => void;
   onConfirmar: (datos: DatosFormulario) => Promise<void>;
 }
 
-export function FormularioReserva({ abierto, fecha, hora, onCerrar, onConfirmar }: Props) {
+export function FormularioReserva({
+  abierto,
+  fecha,
+  hora,
+  nombreSugerido,
+  telefonoSugerido,
+  onCerrar,
+  onConfirmar,
+}: Props) {
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
   const [enviando, setEnviando] = useState(false);
+
+  // Al abrir el formulario, se autocompleta con los datos del perfil del cliente logueado.
+  // Sigue siendo editable por si quiere reservar a nombre de otra persona.
+  useEffect(() => {
+    if (abierto) {
+      setNombre(nombreSugerido ?? '');
+      setTelefono(telefonoSugerido ?? '');
+    }
+  }, [abierto, nombreSugerido, telefonoSugerido]);
 
   async function handleConfirmar() {
     if (!nombre.trim()) return;
     setEnviando(true);
     try {
       await onConfirmar({ nombreCliente: nombre.trim(), telefonoCliente: telefono.trim() });
-      setNombre('');
-      setTelefono('');
     } finally {
       setEnviando(false);
     }

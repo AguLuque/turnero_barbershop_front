@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { turnosServicio } from '../servicios/turnos.servicio';
+import { turnosServicio } from '../servicio/turnos.servicio';
 import type { SlotDisponible } from '../types/dominio.types';
 
 export function useDisponibilidad(fecha: string) {
