@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 const items = [
   { to: '/admin', label: 'Turnos', icono: CalendarClock, disponible: true },
   { to: '/admin/fijos', label: 'Fijos', icono: Repeat, disponible: true },
-  { to: '/admin/horarios', label: 'Horarios', icono: Clock, disponible: false },
+  { to: '/admin/horarios', label: 'Horarios', icono: Clock, disponible: true },
   { to: '/admin/clientes', label: 'Clientes', icono: Users, disponible: false },
 ];
 
@@ -19,8 +19,7 @@ export function AdminBottomNav() {
             to={to}
             end
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 px-4 pb-2 text-xs ${
-                isActive ? 'text-primary' : 'text-muted-foreground'
+              `flex flex-col items-center gap-1 px-4 pb-2 text-xs ${isActive ? 'text-primary' : 'text-muted-foreground'
               }`
             }
           >

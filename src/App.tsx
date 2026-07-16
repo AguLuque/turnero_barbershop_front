@@ -6,6 +6,7 @@ import { MisTurnos } from './paginas/MisTurnos.page';
 import { Perfil } from './paginas/Perfil.page';
 import { TurnosDelDia } from './paginas/turnosDia.page.admin';
 import { TurnosFijos } from './paginas/TurnosFijos.admin';
+import { Horarios } from './paginas/Horarios.page.admin';
 import { LayoutPrincipal } from './components/layout/principal.layout';
 import { LayoutAdmin } from './components/layout/layoutAdmin';
 import { APP_ROUTES } from './config/appRoutes';
@@ -40,6 +41,7 @@ export function AppRouter() {
         >
           <Route path={APP_ROUTES.admin.root} element={<TurnosDelDia />} />
           <Route path={APP_ROUTES.admin.turnosFijos} element={<TurnosFijos />} />
+          <Route path={APP_ROUTES.admin.horarios} element={<Horarios />} />
         </Route>
       </Routes>
     </BrowserRouter>

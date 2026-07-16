@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -26,6 +27,7 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   useEffect(() => {
     if (sesion) {
@@ -56,8 +58,6 @@ export function Login() {
       const mensajeOriginal = error instanceof Error ? error.message : 'Ocurrió un error inesperado';
       const mensajeTraducido = traducirErrorAuth(mensajeOriginal);
 
-      // Caso especial: si intenta iniciar sesion con credenciales invalidas,
-      // damos una guia extra invitando a registrarse, en vez de solo el error seco.
       if (modo === 'login' && mensajeOriginal.toLowerCase().includes('invalid login credentials')) {
         toast.error(mensajeTraducido, {
           action: {
@@ -80,7 +80,7 @@ export function Login() {
           <CardTitle>{modo === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</CardTitle>
           <CardDescription>
             {modo === 'login'
-              ? 'Ingresá tu email y contraseña para reservar tu turno'
+              ? 'Ingresa tu correo electrónico y contraseña para reservar tu turno'
               : 'Completá tus datos para crear tu cuenta'}
           </CardDescription>
         </CardHeader>
@@ -102,27 +102,44 @@ export function Login() {
               )}
 
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Gmail</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@mail.com"
+                  placeholder="ejemplo@gmail.com"
                   required
                 />
               </div>
 
               <div className="grid gap-2">
                 <Label htmlFor="password">Contraseña</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  minLength={6}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={mostrarPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    minLength={6}
+                    required
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setMostrarPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
+                    tabIndex={-1}
+                    aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  >
+                    {mostrarPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </CardContent>

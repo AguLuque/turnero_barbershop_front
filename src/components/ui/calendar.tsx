@@ -24,7 +24,12 @@ function Calendar({
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>["variant"]
 }) {
+
   const defaultClassNames = getDefaultClassNames()
+
+  function capitalize(text: string) {
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
 
   return (
     <DayPicker
@@ -39,7 +44,15 @@ function Calendar({
       locale={locale}
       formatters={{
         formatMonthDropdown: (date) =>
-          date.toLocaleString(locale?.code, { month: "short" }),
+          capitalize(date.toLocaleString(locale?.code, { month: "short" })),
+        formatWeekdayName: (date) =>
+          date
+            .toLocaleString(locale?.code, { weekday: "short" })
+            .slice(0, 3),
+        formatCaption: (date) =>
+          capitalize(
+            date.toLocaleString(locale?.code, { month: "long", year: "numeric" })
+          ),
         ...formatters,
       }}
       classNames={{

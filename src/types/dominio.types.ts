@@ -51,3 +51,21 @@ export interface ClienteConRanking {
   perfil: Perfil;
   cantidadTurnos: number;
 }
+
+export interface HorarioAtencion {
+  id: string;
+  id_peluqueria: string;
+  dia_semana: number;
+  hora_inicio: string;
+  hora_fin: string;
+}
+ 
+export interface HorarioBloqueado {
+  id: string;
+  id_peluqueria: string;
+  fecha: string;
+  hora_inicio: string | null;
+  hora_fin: string | null;
+  motivo: string | null;
+}
+ 
