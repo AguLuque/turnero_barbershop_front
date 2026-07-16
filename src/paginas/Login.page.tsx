@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,16 +13,25 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '../hooks/useAuth';
+import { APP_ROUTES } from '../config/appRoutes';
+import { traducirErrorAuth } from '../utils/traducirErrorAuth';
 
 type Modo = 'login' | 'registro';
 
 export function Login() {
-  const { iniciarSesionConEmail, registrarseConEmail } = useAuth();
+  const { sesion, iniciarSesionConEmail, registrarseConEmail } = useAuth();
+  const navigate = useNavigate();
   const [modo, setModo] = useState<Modo>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    if (sesion) {
+      navigate(APP_ROUTES.cliente.root, { replace: true });
+    }
+  }, [sesion, navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,15 +40,34 @@ export function Login() {
     try {
       if (modo === 'login') {
         await iniciarSesionConEmail(email, password);
+        toast.success('¡Bienvenido de nuevo!');
+        navigate(APP_ROUTES.cliente.root, { replace: true });
       } else {
         const { requiereConfirmacion } = await registrarseConEmail(email, password, nombreCompleto);
         if (requiereConfirmacion) {
-          toast.success('Te enviamos un mail para confirmar tu cuenta');
+          toast.success('Cuenta creada. Te enviamos un mail para confirmarla antes de ingresar.');
           setModo('login');
+        } else {
+          toast.success('Cuenta creada correctamente');
+          navigate(APP_ROUTES.cliente.root, { replace: true });
         }
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Ocurrió un error inesperado');
+      const mensajeOriginal = error instanceof Error ? error.message : 'Ocurrió un error inesperado';
+      const mensajeTraducido = traducirErrorAuth(mensajeOriginal);
+
+      // Caso especial: si intenta iniciar sesion con credenciales invalidas,
+      // damos una guia extra invitando a registrarse, en vez de solo el error seco.
+      if (modo === 'login' && mensajeOriginal.toLowerCase().includes('invalid login credentials')) {
+        toast.error(mensajeTraducido, {
+          action: {
+            label: 'Registrarme',
+            onClick: () => setModo('registro'),
+          },
+        });
+      } else {
+        toast.error(mensajeTraducido);
+      }
     } finally {
       setEnviando(false);
     }

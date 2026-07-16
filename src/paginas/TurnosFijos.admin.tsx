@@ -1,10 +1,10 @@
+// src/paginas/admin/TurnosFijos.tsx
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Plus, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTurnosFijos } from '../hooks/useTurnosFijos';
-import { useClientesAdmin } from '../hooks/useClientesAdmin';
 import { turnosFijosServicio } from '../servicio/turnosFijos.servicio';
 import { TarjetaTurnoFijo } from '../components/turnos/infoTurnoFijo.admin';
 import { FormularioTurnoFijo } from '../components/turnos/formularioTurnoFijo.admin';
@@ -13,17 +13,13 @@ import type { TurnoFijo } from '../types/dominio.types';
 
 export function TurnosFijos() {
   const { turnosFijos, cargando, crear, darDeBaja } = useTurnosFijos();
-  const { clientes } = useClientesAdmin();
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [turnoFijoABaja, setTurnoFijoABaja] = useState<TurnoFijo | null>(null);
   const [generando, setGenerando] = useState(false);
 
-  function buscarCliente(idCliente: string) {
-    return clientes.find((c) => c.perfil.id === idCliente)?.perfil;
-  }
-
   async function handleCrear(datos: {
-    idCliente: string;
+    nombreCliente: string;
+    telefonoCliente: string;
     diaSemana: number;
     hora: string;
     frecuenciaDias: number;
@@ -84,12 +80,7 @@ export function TurnosFijos() {
       ) : (
         <div className="flex flex-col gap-3">
           {turnosFijos.map((turnoFijo) => (
-            <TarjetaTurnoFijo
-              key={turnoFijo.id}
-              turnoFijo={turnoFijo}
-              cliente={buscarCliente(turnoFijo.id_cliente)}
-              onDarDeBaja={setTurnoFijoABaja}
-            />
+            <TarjetaTurnoFijo key={turnoFijo.id} turnoFijo={turnoFijo} onDarDeBaja={setTurnoFijoABaja} />
           ))}
         </div>
       )}
@@ -102,7 +93,7 @@ export function TurnosFijos() {
 
       <ModalConfirmarBaja
         turnoFijo={turnoFijoABaja}
-        cliente={turnoFijoABaja ? buscarCliente(turnoFijoABaja.id_cliente) : undefined}
+        cliente={undefined}
         onCerrar={() => setTurnoFijoABaja(null)}
         onConfirmar={handleConfirmarBaja}
       />

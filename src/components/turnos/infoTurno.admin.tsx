@@ -31,8 +31,8 @@ export function TarjetaTurnoAdmin({ turno, onMarcarFalto, onCancelar }: Props) {
 
   return (
     <Card>
-      <CardContent className="flex items-center justify-between p-4">
-        <div>
+      <CardContent className="flex items-start justify-between gap-3 p-4">
+        <div className="flex flex-col gap-1">
           <p className="font-medium">{formatearHora(turno.hora)} hs</p>
           <p className="text-sm text-muted-foreground">{turno.nombre_cliente}</p>
           {turno.telefono_cliente && (
@@ -40,14 +40,16 @@ export function TarjetaTurnoAdmin({ turno, onMarcarFalto, onCancelar }: Props) {
               href={armarLinkWhatsapp(turno.telefono_cliente, mensajeWhatsapp)}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-1 inline-flex items-center gap-1 text-sm text-green-600 hover:underline"
+              className="inline-flex w-fit items-center gap-1 text-sm text-green-600 hover:underline"
             >
               <MessageCircle size={14} />
               Enviar mensaje
             </a>
           )}
-          <Badge className={`mt-2 ${ESTILOS_ESTADO[turno.estado]}`}>{ETIQUETAS_ESTADO[turno.estado]}</Badge>
-        </div>
+          <Badge className={`mt-1 ${ESTILOS_ESTADO[turno.estado]}`}>{ETIQUETAS_ESTADO[turno.estado]}</Badge>
+      </div>
+
+      <div className="flex flex-col items-end gap-2">
         {turno.estado === 'confirmado' && (
           <div className="flex flex-col gap-2">
             <Button variant="outline" size="sm" onClick={() => onMarcarFalto(turno)}>
@@ -58,7 +60,8 @@ export function TarjetaTurnoAdmin({ turno, onMarcarFalto, onCancelar }: Props) {
             </Button>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </CardContent>
+    </Card >
   );
 }

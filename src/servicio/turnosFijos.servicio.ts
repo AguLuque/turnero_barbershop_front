@@ -1,3 +1,4 @@
+// src/servicios/turnosFijos.servicio.ts
 import { apiFetch } from './api';
 import { API_ROUTES } from '../config/api.routes';
 import type { TurnoFijo } from '../types/dominio.types';
@@ -5,7 +6,8 @@ import type { TurnoFijo } from '../types/dominio.types';
 const ID_PELUQUERIA = import.meta.env.VITE_ID_PELUQUERIA;
 
 interface DatosTurnoFijo {
-  idCliente: string;
+  nombreCliente: string;
+  telefonoCliente: string;
   diaSemana: number;
   hora: string;
   frecuenciaDias: number;

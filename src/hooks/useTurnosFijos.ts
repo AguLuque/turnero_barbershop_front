@@ -3,7 +3,8 @@ import { turnosFijosServicio } from '../servicio/turnosFijos.servicio';
 import type { TurnoFijo } from '../types/dominio.types';
 
 interface DatosTurnoFijo {
-  idCliente: string;
+  nombreCliente: string;
+  telefonoCliente: string;
   diaSemana: number;
   hora: string;
   frecuenciaDias: number;

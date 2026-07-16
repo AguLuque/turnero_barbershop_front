@@ -1,3 +1,4 @@
+// src/components/turnos/FormularioTurnoFijo.tsx
 import { useState } from 'react';
 import {
   Dialog,
@@ -10,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useClientesAdmin } from '../../hooks/useClientesAdmin';
 
 const DIAS_SEMANA = [
   { valor: 1, etiqueta: 'Lunes' },
@@ -28,33 +28,43 @@ const FRECUENCIAS = [
   { valor: 30, etiqueta: 'Cada 30 días' },
 ];
 
+interface DatosTurnoFijo {
+  nombreCliente: string;
+  telefonoCliente: string;
+  diaSemana: number;
+  hora: string;
+  frecuenciaDias: number;
+}
+
 interface Props {
   abierto: boolean;
   onCerrar: () => void;
-  onCrear: (datos: { idCliente: string; diaSemana: number; hora: string; frecuenciaDias: number }) => Promise<void>;
+  onCrear: (datos: DatosTurnoFijo) => Promise<void>;
 }
 
 export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
-  const { clientes, cargando: cargandoClientes } = useClientesAdmin();
-  const [idCliente, setIdCliente] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [diaSemana, setDiaSemana] = useState('');
   const [hora, setHora] = useState('');
   const [frecuenciaDias, setFrecuenciaDias] = useState('7');
   const [enviando, setEnviando] = useState(false);
 
-  const formularioCompleto = idCliente && diaSemana && hora;
+  const formularioCompleto = nombre.trim() && diaSemana && hora;
 
   async function handleGuardar() {
     if (!formularioCompleto) return;
     setEnviando(true);
     try {
       await onCrear({
-        idCliente,
+        nombreCliente: nombre.trim(),
+        telefonoCliente: telefono.trim(),
         diaSemana: Number(diaSemana),
         hora,
         frecuenciaDias: Number(frecuenciaDias),
       });
-      setIdCliente('');
+      setNombre('');
+      setTelefono('');
       setDiaSemana('');
       setHora('');
       setFrecuenciaDias('7');
@@ -73,19 +83,13 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
 
         <div className="space-y-4">
           <div className="space-y-1">
-            <Label>Cliente</Label>
-            <Select value={idCliente} onValueChange={(v) => setIdCliente(v ?? '')}>
-              <SelectTrigger>
-                <SelectValue placeholder={cargandoClientes ? 'Cargando...' : 'Elegí un cliente'} />
-              </SelectTrigger>
-              <SelectContent>
-                {clientes.map(({ perfil }) => (
-                  <SelectItem key={perfil.id} value={perfil.id}>
-                    {perfil.nombre_completo ?? perfil.id}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="nombre-fijo">Nombre y apellido</Label>
+            <Input id="nombre-fijo" value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Juan Perez" />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="telefono-fijo">Teléfono</Label>
+            <Input id="telefono-fijo" value={telefono} onChange={(e) => setTelefono(e.target.value)} placeholder="3512345678" />
           </div>
 
           <div className="space-y-1">

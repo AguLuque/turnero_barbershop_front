@@ -9,7 +9,8 @@ import { useTurnosAdmin } from '../hooks/useTurnosAdmin';
 import { turnosServicio } from '../servicio/turnos.servicio';
 import { TarjetaTurnoAdmin } from '../components/turnos/infoTurno.admin';
 import { AdminFormularioTurno } from '../components/turnos/formularioTurno.admin';
-import { ModalCancelar } from '../components/turnos/cancelar.cliente';
+import { ModalConfirmarFalto } from '../components/turnos/confirmarFalto.admin';
+import { ModalConfirmarCancelacionAdmin } from '../components/turnos/confirmarCancelacion.admin';
 import { fechaAISO, formatearFechaLegible } from '../utils/formatoFecha';
 import type { Turno } from '../types/dominio.types';
 
@@ -25,6 +26,7 @@ export function TurnosDelDia() {
   const { turnos, cargando, recargar } = useTurnosAdmin(fechaISO);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [turnoAConfirmarFalto, setTurnoAConfirmarFalto] = useState<Turno | null>(null);
+  const [turnoAConfirmarCancelacion, setTurnoAConfirmarCancelacion] = useState<Turno | null>(null);
 
   async function handleConfirmarFalto(turno: Turno) {
     try {
@@ -38,13 +40,15 @@ export function TurnosDelDia() {
     }
   }
 
-  async function handleCancelar(turno: Turno) {
+  async function handleConfirmarCancelacion(turno: Turno) {
     try {
       await turnosServicio.cancelar(turno.id);
       toast.success('Turno cancelado correctamente');
       await recargar();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'No se pudo cancelar el turno');
+    } finally {
+      setTurnoAConfirmarCancelacion(null);
     }
   }
 
@@ -56,10 +60,6 @@ export function TurnosDelDia() {
         </Button>
 
         <Popover>
-          {/* Antes esto envolvia un <Button> dentro del trigger y generaba un
-              <button> anidado dentro de otro <button> (HTML invalido).
-              Se soluciona aplicando los estilos de Button directo al trigger,
-              sin anidar un segundo elemento boton. */}
           <PopoverTrigger
             className={buttonVariants({ variant: 'ghost', className: 'flex items-center gap-2 capitalize' })}
           >
@@ -96,7 +96,7 @@ export function TurnosDelDia() {
               key={turno.id}
               turno={turno}
               onMarcarFalto={setTurnoAConfirmarFalto}
-              onCancelar={handleCancelar}
+              onCancelar={setTurnoAConfirmarCancelacion}
             />
           ))}
         </div>
@@ -109,11 +109,17 @@ export function TurnosDelDia() {
         onCreado={recargar}
       />
 
-      <ModalCancelar
+      <ModalConfirmarFalto
         turno={turnoAConfirmarFalto}
         onCerrar={() => setTurnoAConfirmarFalto(null)}
         onConfirmar={handleConfirmarFalto}
       />
+
+      <ModalConfirmarCancelacionAdmin
+        turno={turnoAConfirmarCancelacion}
+        onCerrar={() => setTurnoAConfirmarCancelacion(null)}
+        onConfirmar={handleConfirmarCancelacion}
+      />
     </div>
   );
-}
+} 
