@@ -17,6 +17,11 @@ interface DatosBloqueo {
   motivo?: string;
 }
 
+interface RespuestaCrearBloqueo {
+  bloqueo: HorarioBloqueado;
+  turnosCancelados: number;
+}
+
 export const horariosServicio = {
   async listarFranjasDelDia(diaSemana: number): Promise<HorarioAtencion[]> {
     const { franjas } = await apiFetch<{ franjas: HorarioAtencion[] }>(
@@ -34,14 +39,28 @@ export const horariosServicio = {
   },
 
   async eliminarFranja(idFranja: string): Promise<void> {
-    await apiFetch<void>(API_ROUTES.horarios.eliminarFranja(idFranja), { metodo: 'DELETE' });
+    await apiFetch<{ eliminado: boolean }>(API_ROUTES.horarios.eliminarFranja(idFranja), {
+      metodo: 'DELETE',
+    });
   },
 
-  async crearBloqueo(datos: DatosBloqueo): Promise<HorarioBloqueado> {
-    const { bloqueo } = await apiFetch<{ bloqueo: HorarioBloqueado }>(API_ROUTES.horarios.bloqueo, {
+  async crearBloqueo(datos: DatosBloqueo): Promise<RespuestaCrearBloqueo> {
+    return apiFetch<RespuestaCrearBloqueo>(API_ROUTES.horarios.bloqueo, {
       metodo: 'POST',
       cuerpo: { idPeluqueria: ID_PELUQUERIA, ...datos },
     });
-    return bloqueo;
+  },
+
+  async listarBloqueos(): Promise<HorarioBloqueado[]> {
+    const { bloqueos } = await apiFetch<{ bloqueos: HorarioBloqueado[] }>(
+      API_ROUTES.horarios.listarBloqueos(ID_PELUQUERIA)
+    );
+    return bloqueos;
+  },
+
+  async eliminarBloqueo(idBloqueo: string): Promise<void> {
+    await apiFetch<{ eliminado: boolean }>(API_ROUTES.horarios.eliminarBloqueo(idBloqueo), {
+      metodo: 'DELETE',
+    });
   },
 };

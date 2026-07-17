@@ -6,7 +6,7 @@ const items = [
   { to: '/admin', label: 'Turnos', icono: CalendarClock, disponible: true },
   { to: '/admin/fijos', label: 'Fijos', icono: Repeat, disponible: true },
   { to: '/admin/horarios', label: 'Horarios', icono: Clock, disponible: true },
-  { to: '/admin/clientes', label: 'Clientes', icono: Users, disponible: false },
+  { to: '/admin/clientes', label: 'Clientes', icono: Users, disponible: true },
 ];
 
 export function AdminBottomNav() {

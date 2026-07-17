@@ -30,5 +30,7 @@ export const API_ROUTES = {
     agregarFranja: '/horarios/dia',
     eliminarFranja: (idFranja: string) => `/horarios/dia/${idFranja}`,
     bloqueo: '/horarios/bloqueo',
+    listarBloqueos: (idPeluqueria: string) => `/horarios/bloqueo?idPeluqueria=${idPeluqueria}`,
+    eliminarBloqueo: (idBloqueo: string) => `/horarios/bloqueo/${idBloqueo}`,
   },
 } as const;

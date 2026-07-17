@@ -59,7 +59,7 @@ export interface HorarioAtencion {
   hora_inicio: string;
   hora_fin: string;
 }
- 
+
 export interface HorarioBloqueado {
   id: string;
   id_peluqueria: string;
@@ -68,4 +68,11 @@ export interface HorarioBloqueado {
   hora_fin: string | null;
   motivo: string | null;
 }
- 
+
+export interface ClienteAdmin {
+  id: string;
+  nombre: string;
+  telefono: string | null;
+  esFijo: boolean;
+  cantidadTurnos: number;
+}

@@ -1,6 +1,6 @@
 import { apiFetch } from './api';
 import { API_ROUTES } from '../config/api.routes';
-import type { ClienteConRanking, Perfil } from '../types/dominio.types';
+import type { ClienteAdmin, Perfil } from '../types/dominio.types';
 
 const ID_PELUQUERIA = import.meta.env.VITE_ID_PELUQUERIA;
 
@@ -25,8 +25,8 @@ export const perfilesServicio = {
     return perfil;
   },
 
-  async adminListarClientes(): Promise<ClienteConRanking[]> {
-    const { clientes } = await apiFetch<{ clientes: ClienteConRanking[] }>(
+  async adminListarClientes(): Promise<ClienteAdmin[]> {
+    const { clientes } = await apiFetch<{ clientes: ClienteAdmin[] }>(
       API_ROUTES.perfiles.clientes(ID_PELUQUERIA)
     );
     return clientes;
