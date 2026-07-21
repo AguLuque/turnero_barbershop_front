@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Eye, EyeOff } from 'lucide-react';
+import { Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -27,7 +27,6 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [enviando, setEnviando] = useState(false);
-  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   useEffect(() => {
     if (sesion) {
@@ -60,10 +59,7 @@ export function Login() {
 
       if (modo === 'login' && mensajeOriginal.toLowerCase().includes('invalid login credentials')) {
         toast.error(mensajeTraducido, {
-          action: {
-            label: 'Registrarme',
-            onClick: () => setModo('registro'),
-          },
+          action: { label: 'Registrarme', onClick: () => setModo('registro') },
         });
       } else {
         toast.error(mensajeTraducido);
@@ -74,78 +70,67 @@ export function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>{modo === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</CardTitle>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-muted/40 px-4">
+      <div className="flex flex-col items-center gap-2 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+          <Scissors size={26} />
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight">TurneroBarber</h1>
+        <p className="text-sm text-muted-foreground">Reservá tu turno en segundos</p>
+      </div>
+
+      <Card className="w-full max-w-sm shadow-lg">
+        <CardHeader className="space-y-1.5">
+          <CardTitle className="text-xl">{modo === 'login' ? 'Iniciar sesión' : 'Crear cuenta'}</CardTitle>
           <CardDescription>
             {modo === 'login'
-              ? 'Ingresa tu correo electrónico y contraseña para reservar tu turno'
+              ? 'Ingresá tu email y contraseña para continuar'
               : 'Completá tus datos para crear tu cuenta'}
           </CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
-          <CardContent>
-            <div className="flex flex-col gap-4">
-              {modo === 'registro' && (
-                <div className="grid gap-2">
-                  <Label htmlFor="nombre">Nombre y apellido</Label>
-                  <Input
-                    id="nombre"
-                    value={nombreCompleto}
-                    onChange={(e) => setNombreCompleto(e.target.value)}
-                    placeholder="Juan Perez"
-                    required
-                  />
-                </div>
-              )}
-
-              <div className="grid gap-2">
-                <Label htmlFor="email">Gmail</Label>
+          <CardContent className="space-y-5">
+            {modo === 'registro' && (
+              <div className="space-y-2">
+                <Label htmlFor="nombre">Nombre y apellido</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ejemplo@gmail.com"
+                  id="nombre"
+                  value={nombreCompleto}
+                  onChange={(e) => setNombreCompleto(e.target.value)}
+                  placeholder="Juan Perez"
                   required
                 />
               </div>
+            )}
 
-              <div className="grid gap-2">
-                <Label htmlFor="password">Contraseña</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={mostrarPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    minLength={6}
-                    required
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setMostrarPassword((prev) => !prev)}
-                    className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
-                    tabIndex={-1}
-                    aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-                  >
-                    {mostrarPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@mail.com"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
+              />
             </div>
           </CardContent>
 
-          <CardFooter className="flex-col gap-3">
-            <Button type="submit" className="w-full" disabled={enviando}>
+          <CardFooter className="mt-2 flex-col gap-4 pt-2">
+            <Button type="submit" className="w-full" size="lg" disabled={enviando}>
               {enviando ? 'Cargando...' : modo === 'login' ? 'Ingresar' : 'Crear cuenta'}
             </Button>
             <Button
