@@ -70,19 +70,25 @@ export function Horarios() {
     }
   }
 
-  async function handleGuardarBloqueo(fecha: string, motivo: string) {
+  async function handleGuardarBloqueo(fecha: string, motivo: string, horaInicio?: string, horaFin?: string) {
     try {
-      const { turnosCancelados } = await horariosServicio.crearBloqueo({ fecha, motivo: motivo || undefined });
+      const { turnosCancelados } = await horariosServicio.crearBloqueo({
+        fecha,
+        motivo: motivo || undefined,
+        horaInicio,
+        horaFin,
+      });
       toast.success(
         turnosCancelados > 0
-          ? `Día bloqueado. Se cancelaron ${turnosCancelados} turno(s) que ya estaban reservados.`
-          : 'Día bloqueado correctamente'
+          ? `Horario bloqueado. Se cancelaron ${turnosCancelados} turno(s) que ya estaban reservados.`
+          : 'Horario bloqueado correctamente'
       );
       await cargarBloqueos();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'No se pudo bloquear el día');
+      toast.error(error instanceof Error ? error.message : 'No se pudo bloquear el horario');
     }
   }
+
 
   async function handleConfirmarDesbloqueo(bloqueo: HorarioBloqueado) {
     try {
@@ -174,13 +180,13 @@ export function Horarios() {
         onCerrar={() => setFranjaAEliminar(null)}
         onConfirmar={handleConfirmarEliminarFranja}
       />
-
       <FormularioBloqueoDia
         abierto={mostrarFormularioBloqueo}
+        bloqueos={bloqueos}
         onCerrar={() => setMostrarFormularioBloqueo(false)}
         onGuardar={handleGuardarBloqueo}
       />
-
+      
       <ModalConfirmarDesbloqueo
         bloqueo={bloqueoADesbloquear}
         onCerrar={() => setBloqueoADesbloquear(null)}

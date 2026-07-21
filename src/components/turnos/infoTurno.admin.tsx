@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { Turno } from '../../types/dominio.types';
-import { formatearHora } from '../../utils/formatoFecha';
+import { formatearHora, fechaAISO } from '../../utils/formatoFecha';
 import { armarLinkWhatsapp } from '../../utils/whatsapp';
 
 const ESTILOS_ESTADO: Record<Turno['estado'], string> = {
@@ -29,9 +29,13 @@ interface Props {
 export function TarjetaTurnoAdmin({ turno, onMarcarFalto, onCancelar }: Props) {
   const mensajeWhatsapp = `Hola ${turno.nombre_cliente}! Te escribo por tu turno de las ${formatearHora(turno.hora)} hs en la barbería.`;
 
+  const turnoTodaviaNoOcurrio = turno.fecha > fechaAISO(new Date());
+  const mostrarBotonFalto = turno.estado === 'confirmado' && !turnoTodaviaNoOcurrio;
+  const mostrarBotonCancelar = turno.estado === 'confirmado';
+
   return (
-    <Card>
-      <CardContent className="flex items-start justify-between gap-3 p-4">
+    <Card className="py-0">
+      <CardContent className="flex items-center justify-between gap-3 p-4">
         <div className="flex flex-col gap-1">
           <p className="font-medium">{formatearHora(turno.hora)} hs</p>
           <p className="text-sm text-muted-foreground">{turno.nombre_cliente}</p>
@@ -46,22 +50,26 @@ export function TarjetaTurnoAdmin({ turno, onMarcarFalto, onCancelar }: Props) {
               Enviar mensaje
             </a>
           )}
-          <Badge className={`mt-1 ${ESTILOS_ESTADO[turno.estado]}`}>{ETIQUETAS_ESTADO[turno.estado]}</Badge>
-      </div>
+          <Badge className={`mt-1 w-fit ${ESTILOS_ESTADO[turno.estado]}`}>
+            {ETIQUETAS_ESTADO[turno.estado]}
+          </Badge>
+        </div>
 
-      <div className="flex flex-col items-end gap-2">
-        {turno.estado === 'confirmado' && (
-          <div className="flex flex-col gap-2">
-            <Button variant="outline" size="sm" onClick={() => onMarcarFalto(turno)}>
-              Marcar falto
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => onCancelar(turno)}>
-              Cancelar
-            </Button>
+        {(mostrarBotonFalto || mostrarBotonCancelar) && (
+          <div className="flex flex-col items-end gap-2">
+            {mostrarBotonFalto && (
+              <Button variant="outline" size="sm" onClick={() => onMarcarFalto(turno)}>
+                Marcar falto
+              </Button>
+            )}
+            {mostrarBotonCancelar && (
+              <Button variant="ghost" size="sm" onClick={() => onCancelar(turno)}>
+                Cancelar
+              </Button>
+            )}
           </div>
         )}
-      </div>
-    </CardContent>
-    </Card >
+      </CardContent>
+    </Card>
   );
 }

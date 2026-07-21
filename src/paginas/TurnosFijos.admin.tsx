@@ -1,11 +1,10 @@
 // src/paginas/admin/TurnosFijos.tsx
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTurnosFijos } from '../hooks/useTurnosFijos';
-import { turnosFijosServicio } from '../servicio/turnosFijos.servicio';
 import { TarjetaTurnoFijo } from '../components/turnos/infoTurnoFijo.admin';
 import { FormularioTurnoFijo } from '../components/turnos/formularioTurnoFijo.admin';
 import { ModalConfirmarBaja } from '../components/turnos/confirmarBaja.admin';
@@ -15,7 +14,6 @@ export function TurnosFijos() {
   const { turnosFijos, cargando, crear, darDeBaja } = useTurnosFijos();
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [turnoFijoABaja, setTurnoFijoABaja] = useState<TurnoFijo | null>(null);
-  const [generando, setGenerando] = useState(false);
 
   async function handleCrear(datos: {
     nombreCliente: string;
@@ -43,31 +41,14 @@ export function TurnosFijos() {
     }
   }
 
-  async function handleGenerarProximos() {
-    setGenerando(true);
-    try {
-      const { cantidadGenerados } = await turnosFijosServicio.generarProximos();
-      toast.success(`Se generaron ${cantidadGenerados} turno(s) nuevo(s)`);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'No se pudieron generar los próximos turnos');
-    } finally {
-      setGenerando(false);
-    }
-  }
-
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 p-4">
       <h1 className="text-xl font-semibold">Turnos fijos</h1>
-
-      <div className="flex gap-2">
-        <Button onClick={() => setMostrarFormulario(true)} className="flex-1 gap-2">
-          <Plus size={18} />
-          Nuevo turno fijo
-        </Button>
-        <Button variant="outline" size="icon" onClick={handleGenerarProximos} disabled={generando}>
-          <RefreshCw size={18} className={generando ? 'animate-spin' : ''} />
-        </Button>
-      </div>
+      
+      <Button onClick={() => setMostrarFormulario(true)} className="w-full gap-2">
+        <Plus size={18} />
+        Nuevo turno fijo
+      </Button>
 
       {cargando ? (
         <div className="flex flex-col gap-3">

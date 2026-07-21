@@ -96,7 +96,9 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
             <Label>Día de la semana</Label>
             <Select value={diaSemana} onValueChange={(v) => setDiaSemana(v ?? '')}>
               <SelectTrigger>
-                <SelectValue placeholder="Elegí un día" />
+                <SelectValue placeholder="Elegí un día">
+                  {DIAS_SEMANA.find((d) => String(d.valor) === diaSemana)?.etiqueta}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {DIAS_SEMANA.map((dia) => (

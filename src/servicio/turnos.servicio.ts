@@ -51,4 +51,15 @@ export const turnosServicio = {
     });
     return turno;
   },
+
+  async adminListarHistorial(idCliente: string | null, nombreCliente: string | null, telefonoCliente: string | null): Promise<Turno[]> {
+    const params = new URLSearchParams();
+    if (idCliente) params.set('idCliente', idCliente);
+    if (nombreCliente) params.set('nombreCliente', nombreCliente);
+    if (telefonoCliente) params.set('telefonoCliente', telefonoCliente);
+
+    const { turnos } = await apiFetch<{ turnos: Turno[] }>(`/turnos/admin/historial?${params.toString()}`);
+    return turnos;
+  },
+  
 };
