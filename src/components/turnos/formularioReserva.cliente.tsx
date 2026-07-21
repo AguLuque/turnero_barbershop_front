@@ -97,7 +97,7 @@ export function FormularioReserva({
             Cancelar
           </Button>
           <Button onClick={handleConfirmar} disabled={!nombre.trim() || enviando}>
-            {enviando ? 'Guardando...' : 'Guardar turno'}
+            {enviando ? 'Guardando...' : 'Confirmar turno'}
           </Button>
         </DialogFooter>
       </DialogContent>

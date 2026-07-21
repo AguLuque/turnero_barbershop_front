@@ -22,7 +22,6 @@ interface Props {
 
 export function AdminFormularioTurno({ abierto, fecha, onCerrar, onCreado }: Props) {
   const [slots, setSlots] = useState<SlotDisponible[]>([]);
-  const [cargandoSlots, setCargandoSlots] = useState(true);
   const [hora, setHora] = useState('');
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -33,20 +32,11 @@ export function AdminFormularioTurno({ abierto, fecha, onCerrar, onCreado }: Pro
       setHora('');
       setNombre('');
       setTelefono('');
-      setCargandoSlots(true);
-      turnosServicio
-        .obtenerDisponibilidad(fecha)
-        .then(setSlots)
-        .finally(() => setCargandoSlots(false));
+      turnosServicio.obtenerDisponibilidad(fecha).then(setSlots);
     }
   }, [abierto, fecha]);
 
   const disponibles = slots.filter((slot) => slot.disponible);
-  // Si el peluquero no atiende ese dia (por su horario semanal, o esta bloqueado
-  // el dia completo), el back devuelve un array vacio de entrada. Si atiende pero
-  // ya se ocuparon todos los horarios, slots trae datos pero ninguno disponible.
-  const noAtiendeEsteDia = !cargandoSlots && slots.length === 0;
-  const sinTurnosLibres = !cargandoSlots && slots.length > 0 && disponibles.length === 0;
 
   async function handleGuardar() {
     if (!hora || !nombre.trim()) return;
@@ -75,30 +65,20 @@ export function AdminFormularioTurno({ abierto, fecha, onCerrar, onCreado }: Pro
         <div className="space-y-4">
           <div className="space-y-1">
             <Label>Horario</Label>
-
-            {cargandoSlots ? (
-              <p className="text-sm text-muted-foreground">Buscando horarios...</p>
-            ) : noAtiendeEsteDia ? (
-              <p className="rounded-md bg-muted p-3 text-sm font-medium text-muted-foreground">
-                No hay atención este día
-              </p>
-            ) : sinTurnosLibres ? (
-              <p className="rounded-md bg-muted p-3 text-sm font-medium text-muted-foreground">
-                Turnos completos, no quedan horarios disponibles
-              </p>
-            ) : (
-              <Select value={hora} onValueChange={(value) => setHora(value ?? '')}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Elegí un horario" />
-                </SelectTrigger>
-                <SelectContent>
-                  {disponibles.map((slot) => (
-                    <SelectItem key={slot.hora} value={slot.hora}>
-                      {slot.hora}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <Select value={hora} onValueChange={(value) => setHora(value ?? '')}>
+              <SelectTrigger>
+                <SelectValue placeholder="Elegí un horario" />
+              </SelectTrigger>
+              <SelectContent>
+                {disponibles.map((slot) => (
+                  <SelectItem key={slot.hora} value={slot.hora}>
+                    {slot.hora}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {disponibles.length === 0 && (
+              <p className="text-sm text-muted-foreground">No hay horarios libres ese día</p>
             )}
           </div>
 
