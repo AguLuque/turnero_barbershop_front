@@ -9,6 +9,10 @@ export function esHoy(fechaISO: string): boolean {
   return fechaISO === fechaAISO(new Date());
 }
 
+export function turnoYaOcurrio(fechaISO: string, hora: string): boolean {
+  return new Date(`${fechaISO}T${hora}`).getTime() < Date.now();
+}
+
 export function formatearFechaLegible(fechaISO: string): string {
   const fecha = new Date(`${fechaISO}T00:00:00`);
   return fecha.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });

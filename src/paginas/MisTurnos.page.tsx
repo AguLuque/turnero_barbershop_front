@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { TarjetaTurno } from '../components/turnos/infoTurno.cliente';
 import { ModalCancelar } from '../components/turnos/cancelar.cliente';
 import { useTurnos } from '../hooks/useTurnos';
-import { fechaAISO } from '../utils/formatoFecha';
+import { turnoYaOcurrio } from '../utils/formatoFecha';
 import type { Turno } from '../types/dominio.types';
 
 type Tab = 'activas' | 'pasadas' | 'canceladas';
@@ -15,9 +15,7 @@ export function MisTurnos() {
   const [tab, setTab] = useState<Tab>('activas');
 
   const { activas, pasadas, canceladas } = useMemo(() => {
-    const hoy = fechaAISO(new Date());
-
-    const esFutura = (t: Turno) => t.fecha > hoy || (t.fecha === hoy);
+    const esFutura = (t: Turno) => !turnoYaOcurrio(t.fecha, t.hora);
     const ordenAsc = (a: Turno, b: Turno) => a.fecha.localeCompare(b.fecha) || a.hora.localeCompare(b.hora);
     const ordenDesc = (a: Turno, b: Turno) => b.fecha.localeCompare(a.fecha) || b.hora.localeCompare(a.hora);
 
