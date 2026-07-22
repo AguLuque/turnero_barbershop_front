@@ -7,8 +7,8 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Props {
   abierto: boolean;
@@ -16,10 +16,22 @@ interface Props {
   onGuardar: (horaInicio: string, horaFin: string) => Promise<void>;
 }
 
+const HORARIOS_DEL_DIA: string[] = (() => {
+  const horarios: string[] = [];
+  for (let minutos = 0; minutos < 24 * 60; minutos += 30) {
+    const h = Math.floor(minutos / 60).toString().padStart(2, '0');
+    const m = (minutos % 60).toString().padStart(2, '0');
+    horarios.push(`${h}:${m}`);
+  }
+  return horarios;
+})();
+
 export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props) {
   const [horaInicio, setHoraInicio] = useState('');
   const [horaFin, setHoraFin] = useState('');
   const [enviando, setEnviando] = useState(false);
+
+  const opcionesHoraFin = horaInicio ? HORARIOS_DEL_DIA.filter((h) => h > horaInicio) : HORARIOS_DEL_DIA;
 
   const formularioCompleto = horaInicio && horaFin;
 
@@ -45,22 +57,40 @@ export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props)
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <Label htmlFor="hora-inicio-franja">Desde</Label>
-            <Input
-              id="hora-inicio-franja"
-              type="time"
+            <Label>Desde</Label>
+            <Select
               value={horaInicio}
-              onChange={(e) => setHoraInicio(e.target.value)}
-            />
+              onValueChange={(v) => {
+                setHoraInicio(v ?? '');
+                if (horaFin && v && horaFin <= v) setHoraFin('');
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Elegí un horario">{horaInicio}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {HORARIOS_DEL_DIA.map((h) => (
+                  <SelectItem key={h} value={h}>
+                    {h}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="hora-fin-franja">Hasta</Label>
-            <Input
-              id="hora-fin-franja"
-              type="time"
-              value={horaFin}
-              onChange={(e) => setHoraFin(e.target.value)}
-            />
+            <Label>Hasta</Label>
+            <Select value={horaFin} onValueChange={(v) => setHoraFin(v ?? '')}>
+              <SelectTrigger>
+                <SelectValue placeholder="Elegí un horario">{horaFin}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {opcionesHoraFin.map((h) => (
+                  <SelectItem key={h} value={h}>
+                    {h}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

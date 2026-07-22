@@ -1,5 +1,5 @@
 // src/components/turnos/FormularioTurnoFijo.tsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { horariosServicio } from '../../servicio/horarios.servicio';
 
 const DIAS_SEMANA = [
   { valor: 1, etiqueta: 'Lunes' },
@@ -42,6 +43,23 @@ interface Props {
   onCrear: (datos: DatosTurnoFijo) => Promise<void>;
 }
 
+function generarHorariosDeFranjas(franjas: { hora_inicio: string; hora_fin: string }[]): string[] {
+  const horarios: string[] = [];
+  for (const franja of franjas) {
+    const [hIni, mIni] = franja.hora_inicio.slice(0, 5).split(':').map(Number);
+    const [hFin, mFin] = franja.hora_fin.slice(0, 5).split(':').map(Number);
+    let minutos = hIni * 60 + mIni;
+    const minutosFin = hFin * 60 + mFin;
+    while (minutos <= minutosFin) {
+      const h = Math.floor(minutos / 60).toString().padStart(2, '0');
+      const m = (minutos % 60).toString().padStart(2, '0');
+      horarios.push(`${h}:${m}`);
+      minutos += 30;
+    }
+  }
+  return horarios;
+}
+
 export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
@@ -49,8 +67,23 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
   const [hora, setHora] = useState('');
   const [frecuenciaDias, setFrecuenciaDias] = useState('7');
   const [enviando, setEnviando] = useState(false);
+  const [horariosValidos, setHorariosValidos] = useState<string[]>([]);
+  const [cargandoHorarios, setCargandoHorarios] = useState(false);
 
   const formularioCompleto = nombre.trim() && diaSemana && hora;
+
+  useEffect(() => {
+    if (!diaSemana) {
+      setHorariosValidos([]);
+      return;
+    }
+    setCargandoHorarios(true);
+    setHora('');
+    horariosServicio
+      .listarFranjasDelDia(Number(diaSemana))
+      .then((franjas) => setHorariosValidos(generarHorariosDeFranjas(franjas)))
+      .finally(() => setCargandoHorarios(false));
+  }, [diaSemana]);
 
   async function handleGuardar() {
     if (!formularioCompleto) return;
@@ -111,8 +144,27 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="hora-fija">Horario</Label>
-            <Input id="hora-fija" type="time" value={hora} onChange={(e) => setHora(e.target.value)} />
+            <Label>Horario</Label>
+            {!diaSemana ? (
+              <p className="text-sm text-muted-foreground">Elegí primero un día</p>
+            ) : cargandoHorarios ? (
+              <p className="text-sm text-muted-foreground">Buscando horarios...</p>
+            ) : horariosValidos.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Ese día no tiene horarios configurados</p>
+            ) : (
+              <Select value={hora} onValueChange={(v) => setHora(v ?? '')}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Elegí un horario">{hora}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {horariosValidos.map((h) => (
+                    <SelectItem key={h} value={h}>
+                      {h}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           <div className="space-y-1">
