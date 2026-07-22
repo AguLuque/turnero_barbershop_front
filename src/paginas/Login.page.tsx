@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Eye, EyeOff } from 'lucide-react';
 import {
@@ -73,9 +72,7 @@ export function Login() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-8 bg-muted/40 px-4">
       <div className="flex flex-col items-center gap-2 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-          <Scissors size={26} />
-        </div>
+        <img src="/Logo.png" alt="Barber Cache" className="h-20 w-20 rounded-full object-cover" />
         <h1 className="text-2xl font-bold tracking-tight">TurneroBarber</h1>
         <p className="text-sm text-muted-foreground">Reservá tu turno en segundos</p>
       </div>
