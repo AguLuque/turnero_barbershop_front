@@ -2,8 +2,7 @@
 import { apiFetch } from './api';
 import { API_ROUTES } from '../config/api.routes';
 import type { TurnoFijo } from '../types/dominio.types';
-
-const ID_PELUQUERIA = import.meta.env.VITE_ID_PELUQUERIA;
+import { obtenerIdPeluqueriaActual } from './peluqueriaActual.servicio';
 
 interface DatosTurnoFijo {
   nombreCliente: string;
@@ -15,16 +14,18 @@ interface DatosTurnoFijo {
 
 export const turnosFijosServicio = {
   async listar(): Promise<TurnoFijo[]> {
+    const idPeluqueria = await obtenerIdPeluqueriaActual();
     const { turnosFijos } = await apiFetch<{ turnosFijos: TurnoFijo[] }>(
-      API_ROUTES.turnosFijos.listar(ID_PELUQUERIA)
+      API_ROUTES.turnosFijos.listar(idPeluqueria)
     );
     return turnosFijos;
   },
 
   async crear(datos: DatosTurnoFijo): Promise<TurnoFijo> {
+    const idPeluqueria = await obtenerIdPeluqueriaActual();
     const { turnoFijo } = await apiFetch<{ turnoFijo: TurnoFijo }>(API_ROUTES.turnosFijos.base, {
       metodo: 'POST',
-      cuerpo: { idPeluqueria: ID_PELUQUERIA, ...datos },
+      cuerpo: { idPeluqueria, ...datos },
     });
     return turnoFijo;
   },
@@ -38,9 +39,10 @@ export const turnosFijosServicio = {
   },
 
   async generarProximos(): Promise<{ cantidadGenerados: number }> {
+    const idPeluqueria = await obtenerIdPeluqueriaActual();
     return apiFetch<{ cantidadGenerados: number }>(API_ROUTES.turnosFijos.generarProximos, {
       metodo: 'POST',
-      cuerpo: { idPeluqueria: ID_PELUQUERIA },
+      cuerpo: { idPeluqueria },
     });
   },
 };

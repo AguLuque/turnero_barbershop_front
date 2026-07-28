@@ -47,6 +47,7 @@ export function Perfil() {
 
   const email = sesion?.user.email ?? '';
   const inicial = (perfil?.nombre_completo ?? email).charAt(0).toUpperCase();
+  const hayCambios = nombre !== (perfil?.nombre_completo ?? '') || telefono !== (perfil?.telefono ?? '');
 
   return (
     <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
@@ -67,10 +68,16 @@ export function Perfil() {
 
       <div className="space-y-1">
         <Label htmlFor="telefono">Teléfono</Label>
-        <Input id="telefono" value={telefono} onChange={(e) => setTelefono(e.target.value)} />
+        <Input
+          id="telefono"
+          type="tel"
+          inputMode="numeric"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value.replace(/\D/g, ''))}
+        />
       </div>
 
-      <Button onClick={handleGuardar} disabled={guardando}>
+      <Button onClick={handleGuardar} disabled={guardando || !hayCambios}>
         {guardando ? 'Guardando...' : 'Guardar cambios'}
       </Button>
 

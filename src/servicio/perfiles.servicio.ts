@@ -1,8 +1,8 @@
 import { apiFetch } from './api';
 import { API_ROUTES } from '../config/api.routes';
 import type { ClienteAdmin, Perfil } from '../types/dominio.types';
+import { obtenerIdPeluqueriaActual } from './peluqueriaActual.servicio';
 
-const ID_PELUQUERIA = import.meta.env.VITE_ID_PELUQUERIA;
 
 type CambiosPerfil = Partial<Pick<Perfil, 'nombre_completo' | 'telefono' | 'foto_url'>>;
 
@@ -26,8 +26,9 @@ export const perfilesServicio = {
   },
 
   async adminListarClientes(): Promise<ClienteAdmin[]> {
+    const idPeluqueria = await obtenerIdPeluqueriaActual();
     const { clientes } = await apiFetch<{ clientes: ClienteAdmin[] }>(
-      API_ROUTES.perfiles.clientes(ID_PELUQUERIA)
+      API_ROUTES.perfiles.clientes(idPeluqueria)
     );
     return clientes;
   },

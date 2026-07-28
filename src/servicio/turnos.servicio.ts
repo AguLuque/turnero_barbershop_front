@@ -1,8 +1,8 @@
 import { apiFetch } from './api';
 import { API_ROUTES } from '../config/api.routes';
 import type { SlotDisponible, Turno } from '../types/dominio.types';
+import { obtenerIdPeluqueriaActual } from './peluqueriaActual.servicio';
 
-const ID_PELUQUERIA = import.meta.env.VITE_ID_PELUQUERIA;
 
 interface DatosReserva {
   fecha: string;
@@ -13,17 +13,19 @@ interface DatosReserva {
 
 export const turnosServicio = {
   async obtenerDisponibilidad(fecha: string): Promise<SlotDisponible[]> {
+    const idPeluqueria = await obtenerIdPeluqueriaActual();
     const { slots } = await apiFetch<{ slots: SlotDisponible[] }>(
-      API_ROUTES.disponibilidad.base(ID_PELUQUERIA, fecha),
+      API_ROUTES.disponibilidad.base(idPeluqueria, fecha),
       { requiereAuth: false }
     );
     return slots;
   },
 
   async reservar(datos: DatosReserva): Promise<Turno> {
+    const idPeluqueria = await obtenerIdPeluqueriaActual();
     const { turno } = await apiFetch<{ turno: Turno }>(API_ROUTES.turnos.base, {
       metodo: 'POST',
-      cuerpo: { idPeluqueria: ID_PELUQUERIA, ...datos },
+      cuerpo: { idPeluqueria: idPeluqueria, ...datos },
     });
     return turno;
   },
@@ -61,5 +63,5 @@ export const turnosServicio = {
     const { turnos } = await apiFetch<{ turnos: Turno[] }>(`/turnos/admin/historial?${params.toString()}`);
     return turnos;
   },
-  
+
 };
