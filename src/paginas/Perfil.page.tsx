@@ -24,6 +24,7 @@ export function Perfil() {
   }, [perfil]);
 
   async function handleGuardar() {
+    if (guardando) return;
     setGuardando(true);
     try {
       await actualizar({ nombre_completo: nombre, telefono });

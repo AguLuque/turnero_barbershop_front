@@ -1,4 +1,5 @@
 // src/components/turnos/confirmarFalto.admin.tsx
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -19,7 +20,19 @@ interface Props {
 }
 
 export function ModalConfirmarFalto({ turno, onCerrar, onConfirmar }: Props) {
+  const [procesando, setProcesando] = useState(false);
+
   if (!turno) return null;
+
+  const handleConfirmar = async () => {
+    if (procesando) return;
+    setProcesando(true);
+    try {
+      await onConfirmar(turno);
+    } finally {
+      setProcesando(false);
+    }
+  };
 
   return (
     <AlertDialog open={!!turno} onOpenChange={(open) => !open && onCerrar()}>
@@ -33,7 +46,9 @@ export function ModalConfirmarFalto({ turno, onCerrar, onConfirmar }: Props) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Volver</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirmar(turno)}>Sí, marcar falto</AlertDialogAction>
+          <AlertDialogAction onClick={handleConfirmar} disabled={procesando}>
+            {procesando ? 'Marcando...' : 'Sí, marcar falto'}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

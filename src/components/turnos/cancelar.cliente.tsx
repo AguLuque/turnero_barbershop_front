@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,9 +19,21 @@ interface Props {
 }
 
 export function ModalCancelar({ turno, onCerrar, onConfirmar }: Props) {
+  const [procesando, setProcesando] = useState(false);
+
   if (!turno) return null;
 
   const esMismoDia = esHoy(turno.fecha);
+
+  const handleConfirmar = async () => {
+    if (procesando) return;
+    setProcesando(true);
+    try {
+      await onConfirmar(turno);
+    } finally {
+      setProcesando(false);
+    }
+  };
 
   return (
     <AlertDialog open={!!turno} onOpenChange={(open) => !open && onCerrar()}>
@@ -37,8 +50,8 @@ export function ModalCancelar({ turno, onCerrar, onConfirmar }: Props) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Volver</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirmar(turno)}>
-            {esMismoDia ? 'Cancelar de todas formas' : 'Sí, cancelar'}
+          <AlertDialogAction onClick={handleConfirmar} disabled={procesando}>
+            {procesando ? 'Cancelando...' : esMismoDia ? 'Cancelar de todas formas' : 'Sí, cancelar'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

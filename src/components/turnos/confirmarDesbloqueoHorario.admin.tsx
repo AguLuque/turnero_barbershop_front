@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -18,7 +19,19 @@ interface Props {
 }
 
 export function ModalConfirmarDesbloqueo({ bloqueo, onCerrar, onConfirmar }: Props) {
+  const [procesando, setProcesando] = useState(false);
+
   if (!bloqueo) return null;
+
+  const handleConfirmar = async () => {
+    if (procesando) return;
+    setProcesando(true);
+    try {
+      await onConfirmar(bloqueo);
+    } finally {
+      setProcesando(false);
+    }
+  };
 
   return (
     <AlertDialog open={!!bloqueo} onOpenChange={(open) => !open && onCerrar()}>
@@ -33,7 +46,9 @@ export function ModalConfirmarDesbloqueo({ bloqueo, onCerrar, onConfirmar }: Pro
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Volver</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirmar(bloqueo)}>Sí, desbloquear</AlertDialogAction>
+          <AlertDialogAction onClick={handleConfirmar} disabled={procesando}>
+            {procesando ? 'Desbloqueando...' : 'Sí, desbloquear'}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -46,6 +46,7 @@ export function AdminFormularioTurno({ abierto, fecha, onCerrar, onCreado }: Pro
   const sinTurnosLibres = !cargandoSlots && slots.length > 0 && disponibles.length === 0;
 
   async function handleGuardar() {
+    if (enviando) return;
     if (!hora || !nombre.trim()) return;
     setEnviando(true);
     try {

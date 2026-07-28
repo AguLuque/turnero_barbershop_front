@@ -89,6 +89,7 @@ export function FormularioBloqueoDia({ abierto, bloqueos, onCerrar, onGuardar }:
   }
 
   async function handleConfirmar() {
+    if (enviando) return;
     if (!fecha) return;
     setEnviando(true);
     try {

@@ -39,10 +39,12 @@ export const horariosServicio = {
     return franja;
   },
 
-  async eliminarFranja(idFranja: string): Promise<void> {
-    await apiFetch<{ eliminado: boolean }>(API_ROUTES.horarios.eliminarFranja(idFranja), {
-      metodo: 'DELETE',
-    });
+  async eliminarFranja(idFranja: string): Promise<{ turnosCancelados: number }> {
+    const { turnosCancelados } = await apiFetch<{ eliminado: boolean; turnosCancelados: number }>(
+      API_ROUTES.horarios.eliminarFranja(idFranja),
+      { metodo: 'DELETE' }
+    );
+    return { turnosCancelados };
   },
 
   async crearBloqueo(datos: DatosBloqueo): Promise<RespuestaCrearBloqueo> {

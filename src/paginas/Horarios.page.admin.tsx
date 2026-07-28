@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Plus, CalendarOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useHorarios } from '../hooks/useHorarios';
 import { horariosServicio } from '../servicio/horarios.servicio';
+import { obtenerDuracionTurnoActual, actualizarDuracionTurno } from '../servicio/peluqueriaActual.servicio';
 import { TarjetaFranjaHoraria } from '../components/turnos/InfoHorarios.admin';
 import { FormularioFranjaHoraria } from '../components/turnos/formularioHorarios.admin';
 import { FormularioBloqueoDia } from '../components/turnos/formBloqueoHorario.admin';
@@ -12,6 +15,8 @@ import type { HorarioAtencion, HorarioBloqueado } from '../types/dominio.types';
 import { ModalConfirmarEliminarFranja } from '../components/turnos/confirmarEliminarHorarios.admin';
 import { TarjetaBloqueo } from '../components/turnos/InfoBloqueoHorario.admin';
 import { ModalConfirmarDesbloqueo } from '../components/turnos/confirmarDesbloqueoHorario.admin';
+
+const DURACIONES_TURNO = [15, 20, 30, 40, 45, 60, 90];
 
 const DIAS_SEMANA = [
   { valor: 1, etiqueta: 'Lunes' },
@@ -33,6 +38,29 @@ export function Horarios() {
   const [bloqueos, setBloqueos] = useState<HorarioBloqueado[]>([]);
   const [cargandoBloqueos, setCargandoBloqueos] = useState(true);
   const [bloqueoADesbloquear, setBloqueoADesbloquear] = useState<HorarioBloqueado | null>(null);
+
+  const [duracionTurno, setDuracionTurno] = useState<number | null>(null);
+  const [guardandoDuracion, setGuardandoDuracion] = useState(false);
+
+  useEffect(() => {
+    obtenerDuracionTurnoActual().then(setDuracionTurno);
+  }, []);
+
+  async function handleCambiarDuracionTurno(nuevaDuracion: number) {
+    if (guardandoDuracion) return;
+    const duracionAnterior = duracionTurno;
+    setDuracionTurno(nuevaDuracion);
+    setGuardandoDuracion(true);
+    try {
+      await actualizarDuracionTurno(nuevaDuracion);
+      toast.success('Duración de turno actualizada');
+    } catch (error) {
+      setDuracionTurno(duracionAnterior);
+      toast.error(error instanceof Error ? error.message : 'No se pudo actualizar la duración del turno');
+    } finally {
+      setGuardandoDuracion(false);
+    }
+  }
 
   async function cargarBloqueos() {
     setCargandoBloqueos(true);
@@ -60,8 +88,12 @@ export function Horarios() {
 
   async function handleConfirmarEliminarFranja(franja: HorarioAtencion) {
     try {
-      await horariosServicio.eliminarFranja(franja.id);
-      toast.success('Franja horaria eliminada');
+      const { turnosCancelados } = await horariosServicio.eliminarFranja(franja.id);
+      toast.success(
+        turnosCancelados > 0
+          ? `Franja eliminada. Se cancelaron ${turnosCancelados} turno(s) que ya estaban reservados.`
+          : 'Franja horaria eliminada'
+      );
       await recargar();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'No se pudo eliminar la franja');
@@ -105,6 +137,31 @@ export function Horarios() {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4 p-4">
       <h1 className="text-xl font-semibold">Horarios de atención</h1>
+
+      <div className="space-y-1 border-b pb-4">
+        <Label>Duración de cada turno</Label>
+        <Select
+          value={duracionTurno !== null ? String(duracionTurno) : ''}
+          onValueChange={(v) => v && handleCambiarDuracionTurno(Number(v))}
+          disabled={guardandoDuracion}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Elegí una duración">
+              {guardandoDuracion ? 'Guardando...' : duracionTurno !== null ? `${duracionTurno} minutos` : ''}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            {DURACIONES_TURNO.map((duracion) => (
+              <SelectItem key={duracion} value={String(duracion)}>
+                {duracion} minutos
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground">
+          Cambiar esto afecta cada cuánto se generan los horarios disponibles para reservar.
+        </p>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {DIAS_SEMANA.map((dia) => (
@@ -186,7 +243,7 @@ export function Horarios() {
         onCerrar={() => setMostrarFormularioBloqueo(false)}
         onGuardar={handleGuardarBloqueo}
       />
-      
+
       <ModalConfirmarDesbloqueo
         bloqueo={bloqueoADesbloquear}
         onCerrar={() => setBloqueoADesbloquear(null)}

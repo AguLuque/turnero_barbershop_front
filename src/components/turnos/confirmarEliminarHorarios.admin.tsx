@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -19,7 +20,19 @@ interface Props {
 }
 
 export function ModalConfirmarEliminarFranja({ franja, onCerrar, onConfirmar }: Props) {
+  const [procesando, setProcesando] = useState(false);
+
   if (!franja) return null;
+
+  const handleConfirmar = async () => {
+    if (procesando) return;
+    setProcesando(true);
+    try {
+      await onConfirmar(franja);
+    } finally {
+      setProcesando(false);
+    }
+  };
 
   return (
     <AlertDialog open={!!franja} onOpenChange={(open) => !open && onCerrar()}>
@@ -34,7 +47,9 @@ export function ModalConfirmarEliminarFranja({ franja, onCerrar, onConfirmar }: 
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Volver</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirmar(franja)}>Sí, eliminar</AlertDialogAction>
+          <AlertDialogAction onClick={handleConfirmar} disabled={procesando}>
+            {procesando ? 'Eliminando...' : 'Sí, eliminar'}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

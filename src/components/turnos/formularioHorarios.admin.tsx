@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { obtenerDuracionTurnoActual } from '../../servicio/peluqueriaActual.servicio';
 
 interface Props {
   abierto: boolean;
@@ -16,26 +17,35 @@ interface Props {
   onGuardar: (horaInicio: string, horaFin: string) => Promise<void>;
 }
 
-const HORARIOS_DEL_DIA: string[] = (() => {
+function generarHorariosDelDia(duracionMinutos: number): string[] {
   const horarios: string[] = [];
-  for (let minutos = 0; minutos < 24 * 60; minutos += 30) {
+  for (let minutos = 0; minutos < 24 * 60; minutos += duracionMinutos) {
     const h = Math.floor(minutos / 60).toString().padStart(2, '0');
     const m = (minutos % 60).toString().padStart(2, '0');
     horarios.push(`${h}:${m}`);
   }
   return horarios;
-})();
+}
 
 export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props) {
   const [horaInicio, setHoraInicio] = useState('');
   const [horaFin, setHoraFin] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [horariosDelDia, setHorariosDelDia] = useState<string[]>([]);
 
-  const opcionesHoraFin = horaInicio ? HORARIOS_DEL_DIA.filter((h) => h > horaInicio) : HORARIOS_DEL_DIA;
+  useEffect(() => {
+    if (!abierto) return;
+    obtenerDuracionTurnoActual().then((duracionMinutos) => {
+      setHorariosDelDia(generarHorariosDelDia(duracionMinutos));
+    });
+  }, [abierto]);
+
+  const opcionesHoraFin = horaInicio ? horariosDelDia.filter((h) => h > horaInicio) : horariosDelDia;
 
   const formularioCompleto = horaInicio && horaFin;
 
   async function handleGuardar() {
+    if (enviando) return;
     if (!formularioCompleto) return;
     setEnviando(true);
     try {
@@ -55,7 +65,7 @@ export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props)
           <DialogTitle>Agregar franja horaria</DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-1">
             <Label>Desde</Label>
             <Select
@@ -69,7 +79,7 @@ export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props)
                 <SelectValue placeholder="Elegí un horario">{horaInicio}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                {HORARIOS_DEL_DIA.map((h) => (
+                {horariosDelDia.map((h) => (
                   <SelectItem key={h} value={h}>
                     {h}
                   </SelectItem>
@@ -79,7 +89,7 @@ export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props)
           </div>
           <div className="space-y-1">
             <Label>Hasta</Label>
-            <Select value={horaFin} onValueChange={(v) => setHoraFin(v ?? '')}>
+            <Select value={horaFin} onValueChange={(v) => setHoraFin(v ?? '')} disabled={!horaInicio}>
               <SelectTrigger>
                 <SelectValue placeholder="Elegí un horario">{horaFin}</SelectValue>
               </SelectTrigger>

@@ -1,6 +1,8 @@
 export const APP_ROUTES = {
   auth: {
     login: '/login',
+    recuperarContrasena: '/recuperar-contrasena',
+    restablecerContrasena: '/restablecer-contrasena',
   },
   cliente: {
     root: '/',

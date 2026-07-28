@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { RutaProtegida } from './config/rutaPortegida';
 import { Login } from './paginas/Login.page';
+import { RecuperarContrasena } from './paginas/RecuperarContrasena.page';
+import { RestablecerContrasena } from './paginas/RestablecerContrasena.page';
 import { Home } from './paginas/Home';
 import { MisTurnos } from './paginas/MisTurnos.page';
 import { Perfil } from './paginas/Perfil.page';
@@ -19,6 +21,8 @@ export function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path={APP_ROUTES.auth.login} element={<Login />} />
+        <Route path={APP_ROUTES.auth.recuperarContrasena} element={<RecuperarContrasena />} />
+        <Route path={APP_ROUTES.auth.restablecerContrasena} element={<RestablecerContrasena />} />
 
         {/* Zona cliente: cualquier usuario logueado entra (Home decide si redirige a /admin) */}
         <Route

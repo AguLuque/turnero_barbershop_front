@@ -1,4 +1,9 @@
 export type RolUsuario = 'cliente' | 'admin' | 'superadmin';
+
+export interface Peluqueria {
+  id: string;
+  duracion_turno_minutos: number;
+}
 export type EstadoTurno = 'confirmado' | 'cancelado' | 'completado' | 'falto';
 export type CreadoPor = 'cliente' | 'admin';
 

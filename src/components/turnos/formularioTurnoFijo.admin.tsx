@@ -86,6 +86,7 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
   }, [diaSemana]);
 
   async function handleGuardar() {
+    if (enviando) return;
     if (!formularioCompleto) return;
     setEnviando(true);
     try {

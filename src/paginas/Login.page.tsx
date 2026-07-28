@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Eye, EyeOff } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { InputPassword } from '@/components/ui/input-password';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '../hooks/useAuth';
 import { APP_ROUTES } from '../config/appRoutes';
@@ -27,7 +27,6 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [enviando, setEnviando] = useState(false);
-  const [mostrarPassword, setMostrarPassword] = useState(false);
   useEffect(() => {
     if (sesion) {
       navigate(APP_ROUTES.cliente.root, { replace: true });
@@ -36,6 +35,7 @@ export function Login() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (enviando) return;
     setEnviando(true);
 
     try {
@@ -116,25 +116,24 @@ export function Login() {
 
             <div className="space-y-2">
               <Label htmlFor="password">Contraseña</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={mostrarPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  minLength={6}
-                  required
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setMostrarPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                  tabIndex={-1}
-                >
-                  {mostrarPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
+              <InputPassword
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+                required
+              />
+              {modo === 'login' && (
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => navigate(APP_ROUTES.auth.recuperarContrasena)}
+                    className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
+              )}
             </div>
           </CardContent>
 

@@ -31,6 +31,10 @@ export function traducirErrorAuth(mensajeOriginal: string): string {
     return 'No pudimos conectarnos. Revisá tu conexión a internet e intentá de nuevo.';
   }
 
+  if (mensaje.includes('new password should be different from the old password')) {
+    return 'La contraseña nueva tiene que ser distinta a la anterior.';
+  }
+
   // Si no reconocemos el error puntual, devolvemos el original para no ocultar informacion util.
   return mensajeOriginal;
 }

@@ -55,6 +55,7 @@ export function FormularioReserva({
   }, [abierto, nombreSugerido, telefonoSugerido]);
 
   async function handleConfirmar() {
+    if (enviando) return;
     if (!nombre.trim()) return;
     setEnviando(true);
     try {

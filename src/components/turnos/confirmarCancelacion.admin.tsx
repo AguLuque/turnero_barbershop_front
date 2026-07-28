@@ -1,4 +1,5 @@
 // src/components/turnos/confirmarCancelacion.admin.tsx
+import { useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -19,7 +20,19 @@ interface Props {
 }
 
 export function ModalConfirmarCancelacionAdmin({ turno, onCerrar, onConfirmar }: Props) {
+  const [procesando, setProcesando] = useState(false);
+
   if (!turno) return null;
+
+  const handleConfirmar = async () => {
+    if (procesando) return;
+    setProcesando(true);
+    try {
+      await onConfirmar(turno);
+    } finally {
+      setProcesando(false);
+    }
+  };
 
   return (
     <AlertDialog open={!!turno} onOpenChange={(open) => !open && onCerrar()}>
@@ -33,7 +46,9 @@ export function ModalConfirmarCancelacionAdmin({ turno, onCerrar, onConfirmar }:
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Volver</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirmar(turno)}>Sí, cancelar</AlertDialogAction>
+          <AlertDialogAction onClick={handleConfirmar} disabled={procesando}>
+            {procesando ? 'Cancelando...' : 'Sí, cancelar'}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
