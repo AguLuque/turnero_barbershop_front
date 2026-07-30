@@ -45,4 +45,12 @@ export const turnosFijosServicio = {
       cuerpo: { idPeluqueria },
     });
   },
+
+  async listarHorariosOcupadosDelDia(diaSemana: number): Promise<string[]> {
+    const idPeluqueria = await obtenerIdPeluqueriaActual();
+    const { horasOcupadas } = await apiFetch<{ horasOcupadas: string[] }>(
+      API_ROUTES.turnosFijos.horariosOcupados(idPeluqueria, diaSemana)
+    );
+    return horasOcupadas;
+  },
 };

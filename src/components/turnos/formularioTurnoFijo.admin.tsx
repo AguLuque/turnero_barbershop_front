@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { horariosServicio } from '../../servicio/horarios.servicio';
+import { turnosFijosServicio } from '../../servicio/turnosFijos.servicio';
 
 const DIAS_SEMANA = [
   { valor: 1, etiqueta: 'Lunes' },
@@ -79,9 +80,14 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
     }
     setCargandoHorarios(true);
     setHora('');
-    horariosServicio
-      .listarFranjasDelDia(Number(diaSemana))
-      .then((franjas) => setHorariosValidos(generarHorariosDeFranjas(franjas)))
+    Promise.all([
+      horariosServicio.listarFranjasDelDia(Number(diaSemana)),
+      turnosFijosServicio.listarHorariosOcupadosDelDia(Number(diaSemana)),
+    ])
+      .then(([franjas, horasOcupadas]) => {
+        const horasLibres = generarHorariosDeFranjas(franjas).filter((h) => !horasOcupadas.includes(h));
+        setHorariosValidos(horasLibres);
+      })
       .finally(() => setCargandoHorarios(false));
   }, [diaSemana]);
 
@@ -151,7 +157,9 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
             ) : cargandoHorarios ? (
               <p className="text-sm text-muted-foreground">Buscando horarios...</p>
             ) : horariosValidos.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Ese día no tiene horarios configurados</p>
+              <p className="text-sm text-muted-foreground">
+                Ese día no tiene horarios libres para un turno fijo nuevo
+              </p>
             ) : (
               <Select value={hora} onValueChange={(v) => setHora(v ?? '')}>
                 <SelectTrigger>

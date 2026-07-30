@@ -17,6 +17,8 @@ export const API_ROUTES = {
     listar: (idPeluqueria: string) => `/turnos-fijos?idPeluqueria=${idPeluqueria}`,
     darDeBaja: (idTurnoFijo: string) => `/turnos-fijos/${idTurnoFijo}/baja`,
     generarProximos: '/turnos-fijos/generar-proximos',
+    horariosOcupados: (idPeluqueria: string, diaSemana: number) =>
+      `/turnos-fijos/horarios-ocupados?idPeluqueria=${idPeluqueria}&diaSemana=${diaSemana}`,
   },
 
   disponibilidad: {
