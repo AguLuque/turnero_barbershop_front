@@ -78,7 +78,7 @@ export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props)
               <SelectTrigger>
                 <SelectValue placeholder="Elegí un horario">{horaInicio}</SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent alignItemWithTrigger={false} className="max-h-56">
                 {horariosDelDia.map((h) => (
                   <SelectItem key={h} value={h}>
                     {h}
@@ -93,7 +93,7 @@ export function FormularioFranjaHoraria({ abierto, onCerrar, onGuardar }: Props)
               <SelectTrigger>
                 <SelectValue placeholder="Elegí un horario">{horaFin}</SelectValue>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent alignItemWithTrigger={false} className="max-h-56">
                 {opcionesHoraFin.map((h) => (
                   <SelectItem key={h} value={h}>
                     {h}
