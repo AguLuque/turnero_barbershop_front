@@ -165,7 +165,7 @@ export function FormularioTurnoFijo({ abierto, onCerrar, onCrear }: Props) {
                 <SelectTrigger>
                   <SelectValue placeholder="Elegí un horario">{hora}</SelectValue>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false} className="max-h-56">
                   {horariosValidos.map((h) => (
                     <SelectItem key={h} value={h}>
                       {h}

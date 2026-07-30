@@ -89,7 +89,7 @@ export function AdminFormularioTurno({ abierto, fecha, onCerrar, onCreado }: Pro
                 <SelectTrigger>
                   <SelectValue placeholder="Elegí un horario" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent alignItemWithTrigger={false} className="max-h-56">
                   {disponibles.map((slot) => (
                     <SelectItem key={slot.hora} value={slot.hora}>
                       {slot.hora}
