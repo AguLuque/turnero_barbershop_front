@@ -34,9 +34,6 @@ import { obtenerPeluqueriaActual } from '../servicio/peluqueriaActual.servicio';
 import { armarLinkWhatsapp } from '../utils/whatsapp';
 import type { Peluqueria } from '../types/dominio.types';
 
-// TODO: reemplazar por la foto real del peluquero
-const IMAGEN_FONDO_LOGIN = '/fondo-login.jpg';
-
 const COORDENADAS_BARBERIA = { lat: -32.022266865297695, lng: -62.9223240329059 };
 const DIRECCION_BARBERIA = 'Raul Dobric 396';
 const URL_GOOGLE_MAPS = `https://www.google.com/maps?q=${encodeURIComponent(DIRECCION_BARBERIA)}`;
@@ -62,7 +59,6 @@ export function Login() {
   const [telefono, setTelefono] = useState('');
   const [enviando, setEnviando] = useState(false);
   const [peluqueria, setPeluqueria] = useState<Peluqueria | null>(null);
-  const [imagenFondoRota, setImagenFondoRota] = useState(false);
   const [mostrarPoliticas, setMostrarPoliticas] = useState(false);
   const mapaRef = useRef<HTMLDivElement>(null);
 
@@ -144,21 +140,7 @@ export function Login() {
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-muted/40 pb-10">
-      <div className="relative h-44 w-full overflow-hidden sm:h-56">
-        {imagenFondoRota ? (
-          <div className="h-full w-full bg-gradient-to-br from-stone-800 via-stone-700 to-amber-800" />
-        ) : (
-          <img
-            src={IMAGEN_FONDO_LOGIN}
-            alt=""
-            className="h-full w-full object-cover"
-            onError={() => setImagenFondoRota(true)}
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-muted/40 via-transparent to-black/10" />
-      </div>
-
-      <div className="-mt-10 flex flex-col items-center gap-2 px-4 text-center">
+      <div className="mt-12 flex flex-col items-center gap-2 px-4 text-center">
         <img
           src="/Logo.png"
           alt="Barber Cache"
@@ -277,7 +259,10 @@ export function Login() {
               {peluqueria.direccion}
             </a>
 
-            <div ref={mapaRef} className="h-[250px] w-full max-w-sm overflow-hidden rounded-lg shadow-sm" />
+            <div
+              ref={mapaRef}
+              className="isolate h-[250px] w-full max-w-sm overflow-hidden rounded-lg shadow-sm"
+            />
           </>
         )}
 
