@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { MapPin } from 'lucide-react';
+import { FileText, MapPin } from 'lucide-react';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -249,6 +249,7 @@ export function Login() {
       <div className="mt-6 flex flex-col items-center gap-2 px-4 text-center">
         {peluqueria?.direccion && (
           <>
+            <h2 className="text-sm font-semibold text-foreground">Ubicación</h2>
             <a
               href={URL_GOOGLE_MAPS}
               target="_blank"
@@ -267,16 +268,16 @@ export function Login() {
         )}
 
         {(linkWhatsapp || peluqueria?.instagram) && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {linkWhatsapp && (
               <a
                 href={linkWhatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Escribir por WhatsApp"
-                className={buttonVariants({ variant: 'outline', size: 'icon' })}
+                className="flex items-center justify-center rounded-full bg-primary/10 p-3 text-primary transition-colors hover:bg-primary/20 active:bg-primary/25"
               >
-                <FaWhatsapp className="size-5" />
+                <FaWhatsapp className="size-6" />
               </a>
             )}
             {peluqueria?.instagram && (
@@ -285,15 +286,22 @@ export function Login() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Ver Instagram"
-                className={buttonVariants({ variant: 'outline', size: 'icon' })}
+                className="flex items-center justify-center rounded-full bg-primary/10 p-3 text-primary transition-colors hover:bg-primary/20 active:bg-primary/25"
               >
-                <FaInstagram className="size-5" />
+                <FaInstagram className="size-6" />
               </a>
             )}
           </div>
         )}
 
-        <Button variant="link" className="text-muted-foreground" onClick={() => setMostrarPoliticas(true)}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-1 gap-1.5 rounded-full text-muted-foreground"
+          onClick={() => setMostrarPoliticas(true)}
+        >
+          <FileText size={14} />
           Políticas de reserva
         </Button>
       </div>

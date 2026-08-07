@@ -29,7 +29,11 @@ interface Props {
 export function TarjetaTurnoAdmin({ turno, onMarcarFalto, onCancelar }: Props) {
   const mensajeWhatsapp = `Hola ${turno.nombre_cliente}! Te escribo por tu turno de las ${formatearHora(turno.hora)} hs en la barbería.`;
 
-  const turnoTodaviaNoOcurrio = turno.fecha > fechaAISO(new Date());
+  const ahora = new Date();
+  const horaActual = `${String(ahora.getHours()).padStart(2, '0')}:${String(ahora.getMinutes()).padStart(2, '0')}`;
+  const esHoy = turno.fecha === fechaAISO(ahora);
+  const turnoTodaviaNoOcurrio =
+    turno.fecha > fechaAISO(ahora) || (esHoy && turno.hora.slice(0, 5) > horaActual);
   const mostrarBotonFalto = turno.estado === 'confirmado' && !turnoTodaviaNoOcurrio;
   const mostrarBotonCancelar = turno.estado === 'confirmado';
 

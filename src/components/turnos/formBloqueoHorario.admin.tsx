@@ -64,7 +64,9 @@ function formatearMinutos(minutos: number): string {
 
 // Agrupa horarios individuales seleccionados en rangos contiguos segun la
 // duracion de turno (ej: 09:00, 09:30 y 11:00 con duracion 30 -> dos grupos:
-// 09:00-10:00 y 11:00-11:30).
+// 09:00-09:30 y 11:00-11:00). El backend interpreta hora_fin de forma
+// incluyente: es la hora de inicio del ultimo horario seleccionado del
+// grupo, no ese horario mas la duracion del turno.
 function agruparHorariosContiguos(
   horariosSeleccionados: string[],
   duracionMinutos: number
@@ -76,17 +78,18 @@ function agruparHorariosContiguos(
     })
     .sort((a, b) => a - b);
 
-  const grupos: { inicio: number; fin: number }[] = [];
+  const grupos: { inicio: number; fin: number; ultimoInicio: number }[] = [];
   for (const m of minutos) {
     const ultimo = grupos[grupos.length - 1];
     if (ultimo && m === ultimo.fin) {
       ultimo.fin = m + duracionMinutos;
+      ultimo.ultimoInicio = m;
     } else {
-      grupos.push({ inicio: m, fin: m + duracionMinutos });
+      grupos.push({ inicio: m, fin: m + duracionMinutos, ultimoInicio: m });
     }
   }
 
-  return grupos.map((g) => ({ horaInicio: formatearMinutos(g.inicio), horaFin: formatearMinutos(g.fin) }));
+  return grupos.map((g) => ({ horaInicio: formatearMinutos(g.inicio), horaFin: formatearMinutos(g.ultimoInicio) }));
 }
 
 export function FormularioBloqueoDia({ abierto, bloqueos, onCerrar, onGuardar }: Props) {

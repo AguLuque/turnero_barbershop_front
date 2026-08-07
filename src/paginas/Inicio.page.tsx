@@ -10,6 +10,7 @@ import { FormularioReserva } from '../components/turnos/formularioReserva.client
 import { useDisponibilidad } from '../hooks/useDisponibilidad';
 import { usePerfil } from '../hooks/usePerfil';
 import { turnosServicio } from '../servicio/turnos.servicio';
+import { suscribirseANotificaciones } from '../servicio/notificacionesPush.servicio';
 import { fechaAISO } from '../utils/formatoFecha';
 
 export function Inicio() {
@@ -32,6 +33,15 @@ export function Inicio() {
       navigate(APP_ROUTES.cliente.root);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'No se pudo reservar el turno');
+      return;
+    }
+
+    try {
+      await suscribirseANotificaciones();
+    } catch (error) {
+      // Falla silenciosa: la reserva ya se confirmó y el usuario tiene el botón
+      // manual en Perfil como respaldo si esto no funciona.
+      console.warn('No se pudo suscribir a notificaciones', error);
     }
   }
 
