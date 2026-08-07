@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { FileText, MapPin } from 'lucide-react';
 import { FaInstagram, FaWhatsapp } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -27,6 +28,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { InputPassword } from '@/components/ui/input-password';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { useAuth } from '../hooks/useAuth';
 import { APP_ROUTES } from '../config/appRoutes';
 import { traducirErrorAuth } from '../utils/traducirErrorAuth';
@@ -50,7 +52,7 @@ L.Icon.Default.mergeOptions({
 type Modo = 'login' | 'registro';
 
 export function Login() {
-  const { sesion, iniciarSesionConEmail, registrarseConEmail } = useAuth();
+  const { sesion, iniciarSesionConEmail, iniciarSesionConGoogle, registrarseConEmail } = useAuth();
   const navigate = useNavigate();
   const [modo, setModo] = useState<Modo>('login');
   const [email, setEmail] = useState('');
@@ -58,6 +60,7 @@ export function Login() {
   const [nombreCompleto, setNombreCompleto] = useState('');
   const [telefono, setTelefono] = useState('');
   const [enviando, setEnviando] = useState(false);
+  const [enviandoGoogle, setEnviandoGoogle] = useState(false);
   const [peluqueria, setPeluqueria] = useState<Peluqueria | null>(null);
   const [mostrarPoliticas, setMostrarPoliticas] = useState(false);
   const mapaRef = useRef<HTMLDivElement>(null);
@@ -131,6 +134,18 @@ export function Login() {
       }
     } finally {
       setEnviando(false);
+    }
+  }
+
+  async function handleGoogle() {
+    if (enviandoGoogle) return;
+    setEnviandoGoogle(true);
+    try {
+      await iniciarSesionConGoogle();
+    } catch (error) {
+      const mensajeOriginal = error instanceof Error ? error.message : 'Ocurrió un error inesperado';
+      toast.error(traducirErrorAuth(mensajeOriginal));
+      setEnviandoGoogle(false);
     }
   }
 
@@ -231,9 +246,27 @@ export function Login() {
           </CardContent>
 
           <CardFooter className="mt-2 flex-col gap-4 pt-2">
-            <Button type="submit" className="w-full" size="lg" disabled={enviando}>
+            <Button type="submit" className="w-full" size="lg" disabled={enviando || enviandoGoogle}>
               {enviando ? 'Cargando...' : modo === 'login' ? 'Ingresar' : 'Crear cuenta'}
             </Button>
+
+            <div className="flex w-full items-center gap-2">
+              <Separator className="flex-1" />
+              <span className="text-xs text-muted-foreground">O continuá con</span>
+              <Separator className="flex-1" />
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full gap-2"
+              disabled={enviando || enviandoGoogle}
+              onClick={handleGoogle}
+            >
+              <FcGoogle className="size-5" />
+              {enviandoGoogle ? 'Conectando...' : 'Continuar con Google'}
+            </Button>
+
             <Button
               type="button"
               variant="link"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Bell } from 'lucide-react';
+import { AlertCircle, Bell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,6 +68,13 @@ export function Perfil() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col gap-6 p-4">
+      {!perfil?.telefono && (
+        <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-700">
+          <AlertCircle size={18} className="mt-0.5 shrink-0" />
+          <p>Agregá tu número de teléfono para que el peluquero pueda contactarte si hace falta.</p>
+        </div>
+      )}
+
       <div className="flex flex-col items-center gap-2">
         <Avatar className="h-24 w-24">
           <AvatarImage src={perfil?.foto_url ?? undefined} />

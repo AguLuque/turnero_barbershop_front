@@ -13,6 +13,7 @@ interface AuthContextValor {
   errorPerfil: string | null;
   reintentarCargarPerfil: () => Promise<void>;
   iniciarSesionConEmail: (email: string, password: string) => Promise<void>;
+  iniciarSesionConGoogle: () => Promise<void>;
   registrarseConEmail: (
     email: string,
     password: string,
@@ -75,6 +76,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await cargarPerfil();
   }
 
+  async function iniciarSesionConGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin },
+    });
+    if (error) throw new Error(error.message);
+  }
+
   async function registrarseConEmail(
     email: string,
     password: string,
@@ -113,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         errorPerfil,
         reintentarCargarPerfil: cargarPerfil,
         iniciarSesionConEmail,
+        iniciarSesionConGoogle,
         registrarseConEmail,
         cerrarSesion,
       }}
