@@ -14,6 +14,7 @@ interface DatosBloqueo {
   horaInicio?: string;
   horaFin?: string;
   motivo?: string;
+  tipo?: 'bloqueado' | 'orden_llegada';
 }
 
 interface RespuestaCrearBloqueo {

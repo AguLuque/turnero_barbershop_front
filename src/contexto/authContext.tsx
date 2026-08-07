@@ -16,7 +16,8 @@ interface AuthContextValor {
   registrarseConEmail: (
     email: string,
     password: string,
-    nombreCompleto: string
+    nombreCompleto: string,
+    telefono: string
   ) => Promise<{ requiereConfirmacion: boolean }>;
   cerrarSesion: () => Promise<void>;
 }
@@ -77,12 +78,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function registrarseConEmail(
     email: string,
     password: string,
-    nombreCompleto: string
+    nombreCompleto: string,
+    telefono: string
   ): Promise<{ requiereConfirmacion: boolean }> {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: nombreCompleto } },
+      options: { data: { full_name: nombreCompleto, telefono } },
     });
     if (error) throw new Error(error.message);
 

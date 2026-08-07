@@ -10,7 +10,7 @@ import { horariosServicio } from '../servicio/horarios.servicio';
 import { obtenerDuracionTurnoActual, actualizarDuracionTurno } from '../servicio/peluqueriaActual.servicio';
 import { TarjetaFranjaHoraria } from '../components/turnos/InfoHorarios.admin';
 import { FormularioFranjaHoraria } from '../components/turnos/formularioHorarios.admin';
-import { FormularioBloqueoDia } from '../components/turnos/formBloqueoHorario.admin';
+import { FormularioBloqueoDia, type ItemBloqueo } from '../components/turnos/formBloqueoHorario.admin';
 import type { HorarioAtencion, HorarioBloqueado } from '../types/dominio.types';
 import { ModalConfirmarEliminarFranja } from '../components/turnos/confirmarEliminarHorarios.admin';
 import { TarjetaBloqueo } from '../components/turnos/InfoBloqueoHorario.admin';
@@ -102,22 +102,27 @@ export function Horarios() {
     }
   }
 
-  async function handleGuardarBloqueo(fecha: string, motivo: string, horaInicio?: string, horaFin?: string) {
+  async function handleGuardarBloqueo(fecha: string, motivo: string, items: ItemBloqueo[]) {
     try {
-      const { turnosCancelados } = await horariosServicio.crearBloqueo({
-        fecha,
-        motivo: motivo || undefined,
-        horaInicio,
-        horaFin,
-      });
+      let totalCancelados = 0;
+      for (const item of items) {
+        const { turnosCancelados } = await horariosServicio.crearBloqueo({
+          fecha,
+          motivo: motivo || undefined,
+          horaInicio: item.horaInicio,
+          horaFin: item.horaFin,
+          tipo: item.tipo,
+        });
+        totalCancelados += turnosCancelados;
+      }
       toast.success(
-        turnosCancelados > 0
-          ? `Horario bloqueado. Se cancelaron ${turnosCancelados} turno(s) que ya estaban reservados.`
-          : 'Horario bloqueado correctamente'
+        totalCancelados > 0
+          ? `Horario actualizado. Se cancelaron ${totalCancelados} turno(s) que ya estaban reservados.`
+          : 'Horario actualizado correctamente'
       );
       await cargarBloqueos();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'No se pudo bloquear el horario');
+      toast.error(error instanceof Error ? error.message : 'No se pudo guardar el bloqueo');
     }
   }
 

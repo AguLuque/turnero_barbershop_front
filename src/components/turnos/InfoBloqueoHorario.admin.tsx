@@ -9,13 +9,20 @@ interface Props {
 }
 
 export function TarjetaBloqueo({ bloqueo, onDesbloquear }: Props) {
+  const esOrdenLlegada = bloqueo.tipo === 'orden_llegada';
+
   return (
-    <Card>
+    <Card className={esOrdenLlegada ? 'border border-blue-200 bg-blue-50' : undefined}>
       <CardContent className="flex items-center justify-between p-3">
         <div>
+          {esOrdenLlegada && (
+            <span className="mb-1 inline-block rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+              Orden de llegada
+            </span>
+          )}
           <p className="font-medium capitalize">{formatearFechaLegible(bloqueo.fecha)}</p>
           {bloqueo.hora_inicio && bloqueo.hora_fin ? (
-            <p className="text-sm text-muted-foreground">
+            <p className={esOrdenLlegada ? 'text-sm text-blue-700' : 'text-sm text-muted-foreground'}>
               {bloqueo.hora_inicio.slice(0, 5)} a {bloqueo.hora_fin.slice(0, 5)} hs
             </p>
           ) : (

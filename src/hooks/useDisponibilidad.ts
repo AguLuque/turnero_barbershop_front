@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { turnosServicio } from '../servicio/turnos.servicio';
-import type { SlotDisponible } from '../types/dominio.types';
+import type { AvisoOrdenLlegada, SlotDisponible } from '../types/dominio.types';
 
 export function useDisponibilidad(fecha: string) {
   const [slots, setSlots] = useState<SlotDisponible[]>([]);
+  const [avisoOrdenLlegada, setAvisoOrdenLlegada] = useState<AvisoOrdenLlegada | null>(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,7 +13,8 @@ export function useDisponibilidad(fecha: string) {
     setError(null);
     try {
       const resultado = await turnosServicio.obtenerDisponibilidad(fecha);
-      setSlots(resultado);
+      setSlots(resultado.slots);
+      setAvisoOrdenLlegada(resultado.avisoOrdenLlegada);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al cargar disponibilidad');
     } finally {
@@ -24,5 +26,5 @@ export function useDisponibilidad(fecha: string) {
     recargar();
   }, [recargar]);
 
-  return { slots, cargando, error, recargar };
+  return { slots, avisoOrdenLlegada, cargando, error, recargar };
 }

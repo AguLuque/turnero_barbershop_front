@@ -2,7 +2,12 @@ export type RolUsuario = 'cliente' | 'admin' | 'superadmin';
 
 export interface Peluqueria {
   id: string;
+  nombre: string;
   duracion_turno_minutos: number;
+  direccion: string | null;
+  telefono_contacto: string | null;
+  instagram: string | null;
+  bio_peluquero: string | null;
 }
 export type EstadoTurno = 'confirmado' | 'cancelado' | 'completado' | 'falto';
 export type CreadoPor = 'cliente' | 'admin';
@@ -52,6 +57,16 @@ export interface SlotDisponible {
   disponible: boolean;
 }
 
+export interface AvisoOrdenLlegada {
+  horaInicio: string;
+  horaFin: string;
+}
+
+export interface RespuestaDisponibilidad {
+  slots: SlotDisponible[];
+  avisoOrdenLlegada: AvisoOrdenLlegada | null;
+}
+
 export interface ClienteConRanking {
   perfil: Perfil;
   cantidadTurnos: number;
@@ -72,6 +87,7 @@ export interface HorarioBloqueado {
   hora_inicio: string | null;
   hora_fin: string | null;
   motivo: string | null;
+  tipo: 'bloqueado' | 'orden_llegada';
 }
 
 export interface ClienteAdmin {

@@ -3,7 +3,7 @@ import type { Peluqueria } from '../types/dominio.types';
 
 let peluqueriaCacheada: Peluqueria | null = null;
 
-async function obtenerPeluqueriaActual(): Promise<Peluqueria> {
+export async function obtenerPeluqueriaActual(): Promise<Peluqueria> {
   if (peluqueriaCacheada) return peluqueriaCacheada;
 
   const { peluqueria } = await apiFetch<{ peluqueria: Peluqueria }>('/peluquerias/actual', {

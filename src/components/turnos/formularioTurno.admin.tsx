@@ -36,7 +36,7 @@ export function AdminFormularioTurno({ abierto, fecha, onCerrar, onCreado }: Pro
       setCargandoSlots(true);
       turnosServicio
         .obtenerDisponibilidad(fecha)
-        .then(setSlots)
+        .then((resultado) => setSlots(resultado.slots))
         .finally(() => setCargandoSlots(false));
     }
   }, [abierto, fecha]);

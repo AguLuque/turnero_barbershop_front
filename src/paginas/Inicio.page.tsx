@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Info } from 'lucide-react';
 import { APP_ROUTES } from '../config/appRoutes';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,7 @@ import { fechaAISO } from '../utils/formatoFecha';
 export function Inicio() {
   const [fecha, setFecha] = useState<Date>(new Date());
   const fechaISO = fechaAISO(fecha);
-  const { slots, cargando, recargar } = useDisponibilidad(fechaISO);
+  const { slots, avisoOrdenLlegada, cargando, recargar } = useDisponibilidad(fechaISO);
   const { perfil } = usePerfil();
   const [horaSeleccionada, setHoraSeleccionada] = useState<string | null>(null);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -49,6 +50,16 @@ export function Inicio() {
         disabled={{ before: new Date() }}
         className="mx-auto"
       />
+
+      {avisoOrdenLlegada && (
+        <div className="flex items-start gap-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-700">
+          <Info size={18} className="mt-0.5 shrink-0" />
+          <p>
+            De <strong>{avisoOrdenLlegada.horaInicio}</strong> a <strong>{avisoOrdenLlegada.horaFin}</strong>{' '}
+            hs se atiende por orden de llegada, sin necesidad de reservar turno.
+          </p>
+        </div>
+      )}
 
       <GrillaHorarios
         slots={slots}

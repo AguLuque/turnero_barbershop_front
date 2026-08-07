@@ -1,6 +1,6 @@
 import { apiFetch } from './api';
 import { API_ROUTES } from '../config/api.routes';
-import type { SlotDisponible, Turno } from '../types/dominio.types';
+import type { RespuestaDisponibilidad, Turno } from '../types/dominio.types';
 import { obtenerIdPeluqueriaActual } from './peluqueriaActual.servicio';
 
 
@@ -12,13 +12,12 @@ interface DatosReserva {
 }
 
 export const turnosServicio = {
-  async obtenerDisponibilidad(fecha: string): Promise<SlotDisponible[]> {
+  async obtenerDisponibilidad(fecha: string): Promise<RespuestaDisponibilidad> {
     const idPeluqueria = await obtenerIdPeluqueriaActual();
-    const { slots } = await apiFetch<{ slots: SlotDisponible[] }>(
+    return apiFetch<RespuestaDisponibilidad>(
       API_ROUTES.disponibilidad.base(idPeluqueria, fecha),
       { requiereAuth: false }
     );
-    return slots;
   },
 
   async reservar(datos: DatosReserva): Promise<Turno> {
