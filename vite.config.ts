@@ -51,6 +51,9 @@ export default defineConfig({
             handler: "NetworkOnly",
           },
         ],
+        // Suma los listeners de push/notificationclick al service worker que
+        // genera Workbox, sin tener que pasar a injectManifest.
+        importScripts: ["push-sw.js"],
       },
     }),
   ],

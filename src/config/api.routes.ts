@@ -35,4 +35,8 @@ export const API_ROUTES = {
     listarBloqueos: (idPeluqueria: string) => `/horarios/bloqueo?idPeluqueria=${idPeluqueria}`,
     eliminarBloqueo: (idBloqueo: string) => `/horarios/bloqueo/${idBloqueo}`,
   },
+
+  notificaciones: {
+    suscribir: '/notificaciones/suscribir',
+  },
 } as const;

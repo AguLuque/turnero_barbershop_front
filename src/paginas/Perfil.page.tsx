@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Bell } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePerfil } from '../hooks/usePerfil';
 import { useAuth } from '../hooks/useAuth';
+import { soportaNotificacionesPush, suscribirseANotificaciones } from '../servicio/notificacionesPush.servicio';
 
 export function Perfil() {
   const { perfil, cargando, actualizar } = usePerfil();
@@ -15,6 +17,7 @@ export function Perfil() {
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [suscribiendo, setSuscribiendo] = useState(false);
 
   useEffect(() => {
     if (perfil) {
@@ -33,6 +36,19 @@ export function Perfil() {
       toast.error(error instanceof Error ? error.message : 'No se pudo actualizar el perfil');
     } finally {
       setGuardando(false);
+    }
+  }
+
+  async function handleActivarNotificaciones() {
+    if (suscribiendo) return;
+    setSuscribiendo(true);
+    try {
+      await suscribirseANotificaciones();
+      toast.success('¡Listo! Te vamos a avisar antes de cada turno');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'No se pudo activar las notificaciones');
+    } finally {
+      setSuscribiendo(false);
     }
   }
 
@@ -81,6 +97,13 @@ export function Perfil() {
       <Button onClick={handleGuardar} disabled={guardando || !hayCambios}>
         {guardando ? 'Guardando...' : 'Guardar cambios'}
       </Button>
+
+      {soportaNotificacionesPush() && (
+        <Button variant="outline" className="gap-2" onClick={handleActivarNotificaciones} disabled={suscribiendo}>
+          <Bell size={18} />
+          {suscribiendo ? 'Activando...' : 'Activar recordatorios de turno'}
+        </Button>
+      )}
 
       <Button variant="outline" onClick={cerrarSesion}>
         Cerrar sesión
